@@ -18,11 +18,14 @@ const bgmFiles = [
   "/sfx/bgm/magic-forest-kevin-macleod.mp3",
   "/sfx/bgm/enchanted-forest-simon-folwar.mp3",
   "/sfx/bgm/world-of-merge-bosnow.mp3",
+  "/sfx/bgm/beyond-time-danijel-zambo.mp3",
+  "/sfx/bgm/elven-tale-vocalista.mp3",
+  "/sfx/bgm/the-bard-s-tale-simon-folwar.mp3",
 ];
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
-  const [bgmVolume, setBgmVolume] = useState(0.027);
-  const [sfxVolume, setSfxVolume] = useState(0.1);
+  const [bgmVolume, setBgmVolume] = useState(0.27);
+  const [sfxVolume, setSfxVolume] = useState(0.3);
   const [currentBGM, setCurrentBGM] = useState<HTMLAudioElement | null>(null);
 
   let igniteSound: HTMLAudioElement | null = null;

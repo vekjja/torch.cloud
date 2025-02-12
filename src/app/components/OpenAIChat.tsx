@@ -140,6 +140,7 @@ export default function OpenAIChat() {
         onChange={(e) => setInput(e.target.value)}
         sx={{ marginBottom: 2, width: "50%" }}
         onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
+        disabled={loading} // Disable input while loading
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
