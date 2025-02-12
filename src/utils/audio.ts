@@ -1,33 +1,47 @@
-// src/utils/audio.ts
+const audioInstances: { enchantedForest: HTMLAudioElement | null } = {
+  enchantedForest: null,
+};
 
-const audioRef: { current: HTMLAudioElement | null } = { current: null };
-
+const menuSound = new Audio("/sfx/menu.mp3");
 const ignite = new Audio("/sfx/torch-lighting.mp3");
-const enchantedForest = new Audio("/sfx/enchanted-forest-simon-folwar.mp3");
+
+export function menuSelect() {
+  ignite.volume = 1.0;
+  menuSound.play();
+  menuSound.onended = () => {
+    menuSound.remove(); // Cleanup after playing
+  };
+}
 
 export function lightTorch() {
-  // Create or reuse the audio element
-  if (!audioRef.current || audioRef.current === enchantedForest) {
-    const torchAudio = ignite.cloneNode(true) as HTMLAudioElement;
-    torchAudio.volume = 1.0;
-    torchAudio.play();
-    torchAudio.onended = () => {
-      torchAudio.remove(); // Clean up the element after it finishes playing
-    };
-  }
+  ignite.volume = 1.0;
+  ignite.play();
+  ignite.onended = () => {
+    ignite.remove(); // Cleanup after playing
+  };
 }
 
 export function playEnchantedForest() {
-  if (audioRef.current?.paused === false) return; // Prevent multiple plays
-
-  // Create or reuse the audio element
-  if (!audioRef.current) {
-    audioRef.current = enchantedForest;
-    audioRef.current.volume = 0.5;
-    audioRef.current.onended = () => {
-      audioRef.current = null; // Reset so it can be played again
-    };
+  if (
+    audioInstances.enchantedForest &&
+    !audioInstances.enchantedForest.paused
+  ) {
+    return; // Already playing, don't restart
   }
 
-  audioRef.current.play();
+  if (!audioInstances.enchantedForest) {
+    audioInstances.enchantedForest = new Audio(
+      "/sfx/enchanted-forest-simon-folwar.mp3"
+    );
+    audioInstances.enchantedForest.loop = true; // Loop indefinitely
+    audioInstances.enchantedForest.volume = 0.5;
+  }
+
+  audioInstances.enchantedForest.play();
+}
+
+export function stopEnchantedForest() {
+  if (audioInstances.enchantedForest) {
+    audioInstances.enchantedForest.pause();
+  }
 }

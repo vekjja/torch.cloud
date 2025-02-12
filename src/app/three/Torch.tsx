@@ -97,8 +97,8 @@ export default function Torch() {
   }, [animate]);
 
   function handleClick() {
-    lightTorch();
-    playEnchantedForest();
+    lightTorch(); // Plays torch lighting sound
+    playEnchantedForest(); // Plays background music
   }
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { lightTorch } from "@/utils/audio";
+import { menuSelect, playEnchantedForest } from "@/utils/audio";
 import { signIn } from "next-auth/react";
 import {
   Button,
@@ -24,11 +24,13 @@ export default function SignInButton() {
   // const [email, setEmail] = useState("");
 
   const handleClickOpen = () => {
-    lightTorch();
+    menuSelect();
+    playEnchantedForest();
     setOpen(true);
   };
 
   const handleClose = () => {
+    menuSelect();
     setOpen(false);
   };
 
@@ -45,7 +47,11 @@ export default function SignInButton() {
       <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Sign In
       </Button>
-      <Dialog open={open} onClose={handleClose} sx={{ textAlign: "center" }}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        sx={{ textAlign: "center", backgroundColor: "transparent" }}
+      >
         <DialogTitle
           sx={{
             display: "flex",
