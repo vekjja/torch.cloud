@@ -1,5 +1,6 @@
 "use client";
 
+import { lightTorch } from "@/utils/audio";
 import { signIn } from "next-auth/react";
 import {
   Button,
@@ -23,6 +24,7 @@ export default function SignInButton() {
   // const [email, setEmail] = useState("");
 
   const handleClickOpen = () => {
+    lightTorch();
     setOpen(true);
   };
 
@@ -59,52 +61,50 @@ export default function SignInButton() {
           </Typography>
         </DialogTitle>
         <DialogContent>
-          {/* <TextField
-            margin="normal"
-            required
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={email}
-            fullWidth
-            onChange={handleEmailChange}
-          />
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-            onClick={handleEmailSignIn}
-            color="secondary"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            Sign In with Email
-          </Button>
-          OR */}
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 1, mb: 1 }}
-            onClick={() => signIn("google")}
-          >
-            {<GoogleIcon />} Sign In with Google
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 1, mb: 1 }}
-            onClick={() => signIn("discord")}
-          >
-            {<SportsEsportsIcon />} Sign In with Discord
-          </Button>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 1, mb: 1 }}
-            onClick={() => signIn("linkedin")}
-          >
-            {<LinkedInIcon />} Sign In with LinkedIn
-          </Button>
+            <Button
+              variant="contained"
+              sx={{
+                mt: 1,
+                mb: 1,
+                height: "40px",
+                fontSize: "0.875rem",
+              }}
+              onClick={() => signIn("google")}
+            >
+              {<GoogleIcon />} Sign In with Google
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                mt: 1,
+                mb: 1,
+                height: "40px",
+                fontSize: "0.875rem",
+              }}
+              onClick={() => signIn("discord")}
+            >
+              {<SportsEsportsIcon />} Sign In with Discord
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                mt: 1,
+                mb: 1,
+                height: "40px",
+                fontSize: "0.875rem",
+              }}
+              onClick={() => signIn("linkedin")}
+            >
+              {<LinkedInIcon />} Sign In with LinkedIn
+            </Button>
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="info">
