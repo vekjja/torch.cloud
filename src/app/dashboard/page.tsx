@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import TopBar from "../components/TopBar";
 import { Box } from "@mui/material";
 import OpenAIChat from "../components/OpenAIChat";
-import Cloud from "../three/Cloud";
+import Cloud from "../three/GLTF";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);

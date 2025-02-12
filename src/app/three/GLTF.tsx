@@ -5,11 +5,18 @@ import ThreeScene from "./Scene";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
+interface Position {
+  x: number;
+  y: number;
+  z: number;
+}
+
 interface CloudProps {
   color?: number;
   alpha?: boolean;
   width?: number;
   height?: number;
+  position?: Position;
 }
 
 function renderCloud(
@@ -20,7 +27,7 @@ function renderCloud(
 ) {
   const loader = new GLTFLoader();
   loader.load(
-    `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/gltf/cloud/scene.gltf`, // Ensure the correct path
+    `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/gltf/torch/scene.gltf`, // Ensure the correct path
     (gltf) => {
       const model = gltf.scene;
       // Compute model bounding box
@@ -30,7 +37,7 @@ function renderCloud(
 
       // Normalize size
       const maxSize = Math.max(size.x * 0.8, size.y * 0.08, size.z);
-      const scaleFactor = 2 / maxSize; // Adjust scale to fit viewport
+      const scaleFactor = 1 / maxSize; // Adjust scale to fit viewport
       model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
       // Recenter model to the origin
@@ -45,7 +52,7 @@ function renderCloud(
         }
       });
 
-      model.position.set(0, 0, 0);
+      model.position.set(0, -3, 0);
       scene.add(model);
 
       // Adjust Camera Positioning
@@ -61,8 +68,17 @@ function renderCloud(
       bLight.position.set(3, -10, 10);
       scene.add(bLight);
 
+      // Animation mixer
+      const mixer = new THREE.AnimationMixer(model);
+      gltf.animations.forEach((clip) => {
+        mixer.clipAction(clip).play();
+      });
+
       // Animation loop
+      const clock = new THREE.Clock();
       const animate = () => {
+        const delta = clock.getDelta();
+        mixer.update(delta); // Update the mixer on each frame
         model.rotation.y += 0.005; // Smooth rotation
         renderer.render(scene, camera);
         requestRef.current = requestAnimationFrame(animate);

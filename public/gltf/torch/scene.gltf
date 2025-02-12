@@ -1,0 +1,615 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 104,
+      "max": [
+        0.6985554695129395,
+        0.5152189135551453,
+        1.7185120582580566
+      ],
+      "min": [
+        -0.6664385795593262,
+        -0.49682149291038513,
+        -0.7638105154037476
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1248,
+      "componentType": 5126,
+      "count": 104,
+      "max": [
+        0.9920129179954529,
+        0.9790275692939758,
+        0.9993212223052979
+      ],
+      "min": [
+        -0.9677698016166687,
+        -0.9868316054344177,
+        -0.9995885491371155
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 612,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2496,
+      "componentType": 5126,
+      "count": 4657,
+      "max": [
+        1.1833016872406006,
+        1.1780765056610107,
+        2.021585464477539
+      ],
+      "min": [
+        -1.1723555326461792,
+        -1.1775074005126953,
+        -6.193124771118164
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 58380,
+      "componentType": 5126,
+      "count": 4657,
+      "max": [
+        0.999677836894989,
+        0.9999599456787109,
+        1.0
+      ],
+      "min": [
+        -0.9998872876167297,
+        -0.9998744130134583,
+        -1.0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 2448,
+      "componentType": 5125,
+      "count": 16047,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 114264,
+      "componentType": 5126,
+      "count": 63,
+      "max": [
+        0.22575336694717407,
+        0.24772623181343079,
+        2.085550308227539
+      ],
+      "min": [
+        -0.25019878149032593,
+        -0.2146281599998474,
+        -6.056397438049316
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 115020,
+      "componentType": 5126,
+      "count": 63,
+      "max": [
+        0.9999535083770752,
+        0.9984298944473267,
+        0.999674379825592
+      ],
+      "min": [
+        -0.9990519881248474,
+        -0.9992422461509705,
+        -0.13381372392177582
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 66636,
+      "componentType": 5125,
+      "count": 258,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 115776,
+      "componentType": 5126,
+      "count": 28,
+      "max": [
+        0.33452335000038147,
+        0.3301490843296051,
+        -1.119277000427246
+      ],
+      "min": [
+        -0.35229554772377014,
+        -0.3479757308959961,
+        -3.937127113342285
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 116112,
+      "componentType": 5126,
+      "count": 28,
+      "max": [
+        0.9972992539405823,
+        0.9846749901771545,
+        -0.0479484461247921
+      ],
+      "min": [
+        -0.9972992539405823,
+        -0.9846749901771545,
+        -0.047948483377695084
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 67668,
+      "componentType": 5125,
+      "count": 84,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        23.959999084472656
+      ],
+      "min": [
+        0.0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        5.424505233764648,
+        1026.3367919921875,
+        3.1373403072357178
+      ],
+      "min": [
+        1.4245057106018066,
+        990.000244140625,
+        -11.039107322692871
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 4792,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        23.959999084472656
+      ],
+      "min": [
+        0.0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 14376,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        122.8925552368164,
+        155.1825714111328,
+        135.94851684570313
+      ],
+      "min": [
+        85.0602035522461,
+        100.0,
+        87.3119888305664
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 9584,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        23.959999084472656
+      ],
+      "min": [
+        0.0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 4,
+      "componentType": 5126,
+      "count": 1198,
+      "max": [
+        -0.567143440246582,
+        0.4223131537437439,
+        0.42231324315071106,
+        0.7071065306663513
+      ],
+      "min": [
+        -0.7071070075035095,
+        -0.2510983347892761,
+        -0.25109872221946716,
+        0.5671432018280029
+      ],
+      "type": "VEC4"
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 4,
+            "path": "translation"
+          }
+        },
+        {
+          "sampler": 1,
+          "target": {
+            "node": 4,
+            "path": "scale"
+          }
+        },
+        {
+          "sampler": 2,
+          "target": {
+            "node": 4,
+            "path": "rotation"
+          }
+        }
+      ],
+      "name": "Burning",
+      "samplers": [
+        {
+          "input": 12,
+          "interpolation": "LINEAR",
+          "output": 13
+        },
+        {
+          "input": 14,
+          "interpolation": "LINEAR",
+          "output": 15
+        },
+        {
+          "input": 16,
+          "interpolation": "LINEAR",
+          "output": 17
+        }
+      ]
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "Leon_dp (https://sketchfab.com/leondp)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/non-textured-burning-torch-3-7673e9f5f3034a67bcc7af962deef060",
+      "title": "Non-textured burning torch (3)"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 68004,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 116448,
+      "byteOffset": 68004,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 14376,
+      "byteOffset": 184452,
+      "name": "floatBufferViews"
+    },
+    {
+      "buffer": 0,
+      "byteLength": 28752,
+      "byteOffset": 198828,
+      "byteStride": 12,
+      "name": "floatBufferViews"
+    },
+    {
+      "buffer": 0,
+      "byteLength": 19168,
+      "byteOffset": 227580,
+      "byteStride": 16,
+      "name": "floatBufferViews"
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 246748,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsUsed": [
+    "KHR_materials_clearcoat"
+  ],
+  "materials": [
+    {
+      "alphaMode": "BLEND",
+      "doubleSided": true,
+      "emissiveFactor": [
+        1.0,
+        0.7303562090250737,
+        0.0
+      ],
+      "name": "fire_flame",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1.0,
+          0.434739,
+          0.0,
+          0.995
+        ],
+        "roughnessFactor": 0.0
+      }
+    },
+    {
+      "doubleSided": true,
+      "extensions": {
+        "KHR_materials_clearcoat": {
+          "clearcoatFactor": 0.23288773889069758,
+          "clearcoatRoughnessFactor": 0.2876076338284993
+        }
+      },
+      "name": "metal",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5054543983643133,
+          0.49422526999729655,
+          0.48083438583334964,
+          1.0
+        ],
+        "roughnessFactor": 0.3117988800321033
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "rope",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.38728371163877723,
+          0.13519704378874267,
+          0.024061420084185173,
+          1.0
+        ],
+        "metallicFactor": 0.4639272952947493,
+        "roughnessFactor": 0.694966851698801
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "wood",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.430938,
+          0.308230588355209,
+          0.08614429999999998,
+          1.0
+        ],
+        "metallicFactor": 0.4394825164620689,
+        "roughnessFactor": 0.5544373103745994
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "flame_fire_flame_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "torch_metal_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "indices": 5,
+          "material": 1,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "torch_rope_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6
+          },
+          "indices": 8,
+          "material": 2,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "torch_wood_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 9
+          },
+          "indices": 11,
+          "material": 3,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        2.220446049250313e-16,
+        -1.0,
+        0.0,
+        0.0,
+        1.0,
+        2.220446049250313e-16,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.009999999776482582,
+        0.0,
+        0.0,
+        -0.009999999776482582,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "name": "efa5d836fddc40d1949832cdd821dd16.fbx"
+    },
+    {
+      "children": [
+        3
+      ],
+      "name": "Object_2"
+    },
+    {
+      "children": [
+        4,
+        6
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        5
+      ],
+      "name": "flame",
+      "rotation": [
+        -0.5866280198097229,
+        0.3948008418083191,
+        0.39480093121528625,
+        0.586627721786499
+      ],
+      "scale": [
+        100.0,
+        122.15043640136719,
+        106.26579284667969
+      ],
+      "translation": [
+        1.460960865020752,
+        993.2254028320313,
+        -3.7988624572753906
+      ]
+    },
+    {
+      "mesh": 0,
+      "name": "flame_fire_flame_0"
+    },
+    {
+      "children": [
+        7,
+        8,
+        9
+      ],
+      "name": "torch",
+      "rotation": [
+        -0.7071068286895752,
+        0.0,
+        0.0,
+        0.7071067094802856
+      ],
+      "scale": [
+        100.0,
+        100.0,
+        100.0
+      ],
+      "translation": [
+        0.35519033670425415,
+        889.3108520507813,
+        -4.680273056030273
+      ]
+    },
+    {
+      "mesh": 1,
+      "name": "torch_metal_0"
+    },
+    {
+      "mesh": 2,
+      "name": "torch_rope_0"
+    },
+    {
+      "mesh": 3,
+      "name": "torch_wood_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
