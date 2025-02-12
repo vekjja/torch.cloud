@@ -6,7 +6,6 @@ import SignInButton from "./components/SignInButton";
 import GitHubButton from "./components/GitHubButton";
 import Torch from "./three/Torch";
 import Dashboard from "./components/Dashboard";
-import AudioPlayer from "./components/AudioPlayer";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -33,7 +32,6 @@ export default async function HomePage() {
       ) : (
         <Dashboard session={session} />
       )}
-      <AudioPlayer />
     </Box>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -26,7 +26,8 @@ export default function OpenAIChat() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/v1/openai", {
+      // Fetch OpenAI Chat Response
+      const res = await fetch("/api/v1/openaiChat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: input }),
@@ -34,6 +35,32 @@ export default function OpenAIChat() {
 
       const data = await res.json();
       setResponse(data.reply || "No response received");
+
+      // Call TTS API to get the audio file
+      const ttsRes = await fetch("/api/v1/openaiTTS", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: data.reply }),
+      });
+
+      if (!ttsRes.ok) {
+        throw new Error("Failed to fetch TTS audio");
+      }
+
+      const audioBlob = await ttsRes.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      // Create a temporary download link
+      const a = document.createElement("a");
+      a.href = audioUrl;
+      a.download = "speech.mp3";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Play the downloaded audio
+      const audio = new Audio(audioUrl);
+      audio.play();
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
