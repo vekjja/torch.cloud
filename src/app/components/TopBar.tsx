@@ -5,6 +5,7 @@ import { AppBar, Avatar, Box, Toolbar, Typography } from "@mui/material";
 import { Session } from "next-auth";
 import DonateButton from "./DonateButton";
 import SignOutButton from "./SignOutButton";
+import Settings from "./Settings";
 
 interface TopBarProps {
   session: Session;
@@ -24,6 +25,7 @@ export default function TopBar({ session }: TopBarProps) {
             <Typography variant="h6" component="div">
               Welcome, {session.user?.name}
             </Typography>
+            <Settings />
             <Box sx={{ flexGrow: 1 }} />
             <DonateButton />
             <SignOutButton />

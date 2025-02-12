@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import ClientProviders from "./ClientProviders";
 import { Box, Link, Typography } from "@mui/material";
+import { AudioProvider } from "@/context/AudioProvider";
 
 export const metadata: Metadata = {
   title: "Torch Cloud",
@@ -23,7 +24,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ClientProviders>
-          {children}
+          <AudioProvider>{children}</AudioProvider>
           {/* Footer / Privacy link */}
           <Box width="100%" textAlign="center" padding="1rem" marginTop="100vh">
             <Link href="/privacy" color="inherit" underline="none">

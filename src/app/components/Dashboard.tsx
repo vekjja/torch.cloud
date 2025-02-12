@@ -4,7 +4,7 @@
 import TopBar from "./TopBar";
 import { Box } from "@mui/material";
 import { Session } from "next-auth";
-import { playRandomBGM } from "@/utils/audio";
+import { useAudio } from "@/context/AudioProvider";
 import OpenAIChat from "./OpenAIChat";
 
 interface DashboardProps {
@@ -12,6 +12,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ session }: DashboardProps) {
+  const { playRandomBGM } = useAudio();
   return (
     <Box
       onClick={() => {

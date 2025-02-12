@@ -12,7 +12,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { menuSelect } from "@/utils/audio";
+import { useAudio } from "@/context/AudioProvider";
 import Torch from "../three/Torch";
 
 // Explicitly define types for `code` component props
@@ -41,6 +41,7 @@ const labels = [
 ];
 
 export default function OpenAIChat() {
+  const { menuSelect } = useAudio();
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,7 +62,7 @@ export default function OpenAIChat() {
   };
 
   const handleSubmit = async () => {
-    menuSelect(0.8);
+    menuSelect();
     setLabel(labels[Math.floor(Math.random() * labels.length)]);
     if (!input.trim()) return;
     stopAudio(); // Stop any currently playing audio

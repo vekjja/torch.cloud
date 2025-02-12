@@ -4,16 +4,17 @@ import React, { useRef, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Box } from "@mui/material";
-import { lightTorch } from "@/utils/audio";
+import { useAudio } from "@/context/AudioProvider";
 
 export default function Torch() {
+  const { lightTorch } = useAudio();
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const mixerRef = useRef<THREE.AnimationMixer | null>(null);
   const requestRef = useRef<number | null>(null);
-  const clock = new THREE.Clock();
+  const clock = useRef(new THREE.Clock()).current;
 
   const animate = useCallback(() => {
     if (!sceneRef.current || !cameraRef.current || !rendererRef.current) return;
@@ -23,7 +24,7 @@ export default function Torch() {
 
     rendererRef.current.render(sceneRef.current, cameraRef.current);
     requestRef.current = requestAnimationFrame(animate);
-  }, []);
+  }, [clock]);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -97,7 +98,7 @@ export default function Torch() {
   }, [animate]);
 
   function handleClick() {
-    lightTorch(0.27); // Plays torch lighting sound
+    lightTorch(); // Plays torch lighting sound
   }
 
   return (
