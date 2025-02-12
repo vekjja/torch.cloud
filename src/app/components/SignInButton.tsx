@@ -1,6 +1,5 @@
 "use client";
 
-import { menuSelect, playMagicForrest } from "@/utils/audio";
 import { signIn } from "next-auth/react";
 import {
   Button,
@@ -17,14 +16,14 @@ import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { menuSelect, playRandomBGM } from "@/utils/audio";
 
 export default function SignInButton() {
   const [open, setOpen] = useState(false);
-  // const [email, setEmail] = useState("");
 
   const handleClickOpen = () => {
     menuSelect();
-    playMagicForrest();
+    playRandomBGM();
     setOpen(true);
   };
 

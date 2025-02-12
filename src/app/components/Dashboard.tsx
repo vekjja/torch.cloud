@@ -4,7 +4,7 @@
 import TopBar from "./TopBar";
 import { Box } from "@mui/material";
 import { Session } from "next-auth";
-import { playRandomForest } from "@/utils/audio";
+import { playRandomBGM } from "@/utils/audio";
 import OpenAIChat from "./OpenAIChat";
 
 interface DashboardProps {
@@ -15,7 +15,7 @@ export default function Dashboard({ session }: DashboardProps) {
   return (
     <Box
       onClick={() => {
-        playRandomForest(0.08);
+        playRandomBGM();
       }}
     >
       <TopBar session={session} />
