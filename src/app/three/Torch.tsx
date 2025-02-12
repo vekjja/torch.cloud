@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Box } from "@mui/material";
-import { lightTorch, playEnchantedForest } from "@/utils/audio";
+import { lightTorch } from "@/utils/audio";
 
 export default function Torch() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -98,7 +98,6 @@ export default function Torch() {
 
   function handleClick() {
     lightTorch(); // Plays torch lighting sound
-    playEnchantedForest(); // Plays background music
   }
 
   return (

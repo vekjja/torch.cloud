@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { menuSelect } from "@/utils/audio";
 
 // Explicitly define types for `code` component props
 interface CodeProps {
@@ -20,6 +21,7 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    menuSelect(0.8);
     if (!input.trim()) return;
     setLoading(true);
 
@@ -43,7 +45,7 @@ export default function OpenAIChat() {
   return (
     <Box sx={{ textAlign: "center", padding: 2 }}>
       <TextField
-        label="Ask OpenAI"
+        label="Your Journey Begins..."
         variant="outlined"
         fullWidth
         value={input}
@@ -57,7 +59,7 @@ export default function OpenAIChat() {
         onClick={handleSubmit}
         disabled={loading}
       >
-        {loading ? "Loading..." : "Send"}
+        {loading ? "Loading..." : "Take Action"}
       </Button>
 
       {response && (

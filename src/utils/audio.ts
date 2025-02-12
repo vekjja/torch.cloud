@@ -1,47 +1,51 @@
-const audioInstances: { enchantedForest: HTMLAudioElement | null } = {
-  enchantedForest: null,
-};
+let menuSound: HTMLAudioElement | null = null;
+let ignite: HTMLAudioElement | null = null;
+let magicForrest: HTMLAudioElement | null = null;
+let enchantedForest: HTMLAudioElement | null = null;
 
-const menuSound = new Audio("/sfx/menu.mp3");
-const ignite = new Audio("/sfx/torch-lighting.mp3");
+if (typeof window !== "undefined") {
+  menuSound = new Audio("/sfx/menu.mp3");
+  ignite = new Audio("/sfx/torch-lighting.mp3");
+  magicForrest = new Audio("/sfx/magic-forest-kevin-macleod.mp3");
+  enchantedForest = new Audio("/sfx/enchanted-forest-simon-folwar.mp3");
+}
 
-export function menuSelect() {
-  ignite.volume = 1.0;
-  menuSound.play();
-  menuSound.onended = () => {
-    menuSound.remove(); // Cleanup after playing
-  };
+export function menuSelect(volume: number = 1.0) {
+  if (menuSound) {
+    menuSound.volume = volume;
+    menuSound.play();
+    menuSound.onended = () => {
+      menuSound?.remove(); // Cleanup after playing
+    };
+  }
 }
 
 export function lightTorch() {
-  ignite.volume = 1.0;
-  ignite.play();
-  ignite.onended = () => {
-    ignite.remove(); // Cleanup after playing
-  };
+  if (ignite) {
+    ignite.volume = 1.0;
+    ignite.play();
+    ignite.onended = () => {
+      ignite?.remove(); // Cleanup after playing
+    };
+  }
 }
 
-export function playEnchantedForest() {
-  if (
-    audioInstances.enchantedForest &&
-    !audioInstances.enchantedForest.paused
-  ) {
-    return; // Already playing, don't restart
+export function playMagicForrest(volume: number = 0.5) {
+  if (magicForrest) {
+    magicForrest.volume = volume;
+    magicForrest.play();
+    magicForrest.onended = () => {
+      magicForrest?.remove(); // Cleanup after playing
+    };
   }
-
-  if (!audioInstances.enchantedForest) {
-    audioInstances.enchantedForest = new Audio(
-      "/sfx/enchanted-forest-simon-folwar.mp3"
-    );
-    audioInstances.enchantedForest.loop = true; // Loop indefinitely
-    audioInstances.enchantedForest.volume = 0.5;
-  }
-
-  audioInstances.enchantedForest.play();
 }
 
-export function stopEnchantedForest() {
-  if (audioInstances.enchantedForest) {
-    audioInstances.enchantedForest.pause();
+export function playEnchantedForest(volume: number = 0.5) {
+  if (enchantedForest) {
+    enchantedForest.volume = volume;
+    enchantedForest.play();
+    enchantedForest.onended = () => {
+      enchantedForest?.remove(); // Cleanup after playing
+    };
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { menuSelect, playEnchantedForest } from "@/utils/audio";
+import { menuSelect, playMagicForrest } from "@/utils/audio";
 import { signIn } from "next-auth/react";
 import {
   Button,
@@ -9,7 +9,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  // TextField,
   Avatar,
   Typography,
 } from "@mui/material";
@@ -25,7 +24,7 @@ export default function SignInButton() {
 
   const handleClickOpen = () => {
     menuSelect();
-    playEnchantedForest();
+    playMagicForrest();
     setOpen(true);
   };
 
@@ -33,14 +32,6 @@ export default function SignInButton() {
     menuSelect();
     setOpen(false);
   };
-
-  // const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setEmail(event.target.value);
-  // };
-
-  // const handleEmailSignIn = () => {
-  //   signIn("email", { email });
-  // };
 
   return (
     <Box>
