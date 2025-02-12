@@ -34,9 +34,8 @@ export default function OpenAIChat() {
       });
 
       const data = await res.json();
-      setResponse(data.reply || "No response received");
 
-      // Call TTS API to get the audio file
+      // Fetch TTS Stream
       const ttsRes = await fetch("/api/v1/openaiTTS", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,20 +46,32 @@ export default function OpenAIChat() {
         throw new Error("Failed to fetch TTS audio");
       }
 
-      const audioBlob = await ttsRes.blob();
+      // Create a stream and play audio while loading
+      // const audioContext = new AudioContext();
+      // const source = audioContext.createBufferSource();
+      const reader = ttsRes.body?.getReader();
+
+      if (!reader) {
+        throw new Error("Failed to read TTS stream");
+      }
+
+      const audioChunks: Uint8Array[] = [];
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        audioChunks.push(value);
+      }
+
+      // Convert stream chunks to audio buffer
+      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
 
-      // Create a temporary download link
-      const a = document.createElement("a");
-      a.href = audioUrl;
-      a.download = "speech.mp3";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // Play the downloaded audio
+      // Play the streamed audio
       const audio = new Audio(audioUrl);
       audio.play();
+      // display the response
+      setResponse(data.reply || "No response received");
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
