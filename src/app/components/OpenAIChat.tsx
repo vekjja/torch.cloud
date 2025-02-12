@@ -8,66 +8,58 @@ import {
   Typography,
   InputAdornment,
 } from "@mui/material";
+import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { useAudio } from "@/context/AudioProvider";
 import Torch from "../three/Torch";
 
-// Explicitly define types for `code` component props
-interface CodeProps {
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
+interface Message {
+  role: string;
+  content: string;
 }
 
-const labels = [
-  "What will you do...",
-  "Your Journey Begins...",
-  "Enter your command...",
-  "What is your next move...",
-  "Type your action...",
-  "What's next...",
-  "What will you do next...",
-  "Enter your next command...",
-  "Make a choice...",
-  "The choice is yours...",
-  "Decide your fate...",
-  "Create your destiny...",
-  "Choose your path...",
-  "Select your action...",
-  "Decide your own fate...",
-];
-
 export default function OpenAIChat() {
+  const { data: session } = useSession();
   const { menuSelect } = useAudio();
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
-  const [label, setLabel] = useState(labels[0]);
-  const messages = useRef<
-    { role: string; content: [{ type: string; text: string }] }[]
-  >([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null); // Store current audio instance
+  const messages = useRef<Message[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    setLabel(labels[Math.floor(Math.random() * labels.length)]);
-  }, []);
+    if (session) {
+      fetchMessages();
+    }
+  }, [session]);
+
+  const fetchMessages = async () => {
+    const res = await fetch("/api/v1/messages");
+
+    if (!res.ok) {
+      console.error("Failed to fetch messages");
+      return;
+    }
+
+    const data: Message[] = await res.json();
+    messages.current = data;
+    setResponse(
+      messages.current.map((m) => `${m.role}: ${m.content}`).join("\n")
+    );
+  };
 
   const stopAudio = () => {
     if (audioRef.current) {
       audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset audio position
+      audioRef.current.currentTime = 0;
       audioRef.current = null;
     }
   };
 
   const handleSubmit = async () => {
     menuSelect();
-    setLabel(labels[Math.floor(Math.random() * labels.length)]);
     if (!input.trim()) return;
-    stopAudio(); // Stop any currently playing audio
+    stopAudio();
     setResponse("");
     setLoading(true);
 
@@ -80,53 +72,15 @@ export default function OpenAIChat() {
       });
 
       const data = await res.json();
-      messages.current.push({
-        role: "user",
-        content: [{ type: "text", text: input }],
-      });
-      messages.current.push({
-        role: "assistant",
-        content: [{ type: "text", text: data.reply }],
-      });
+      messages.current.push({ role: "user", content: input });
+      messages.current.push({ role: "assistant", content: data.reply });
 
-      // Fetch TTS Stream
-      const ttsRes = await fetch("/api/v1/openaiTTS", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: data.reply }),
-      });
+      // Fetch and Play TTS
+      await playTTS(data.reply);
 
-      if (!ttsRes.ok) {
-        throw new Error("Failed to fetch TTS audio");
-      }
-
-      // Create a stream and play audio while loading
-      const reader = ttsRes.body?.getReader();
-
-      if (!reader) {
-        throw new Error("Failed to read TTS stream");
-      }
-
-      const audioChunks: Uint8Array[] = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        audioChunks.push(value);
-      }
-
-      // Convert stream chunks to audio buffer
-      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      // Play the streamed audio
-      const audio = new Audio(audioUrl);
-      audio.volume = 1.0;
-      audio.play();
-      audioRef.current = audio; // Store the audio instance
-
-      // Display the response
+      // Update response
       setResponse(data.reply || "No response received");
+      // setInput("");
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
@@ -135,18 +89,49 @@ export default function OpenAIChat() {
     setLoading(false);
   };
 
+  const playTTS = async (text: string) => {
+    try {
+      const ttsRes = await fetch("/api/v1/openaiTTS", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: text }),
+      });
+
+      if (!ttsRes.ok) throw new Error("Failed to fetch TTS audio");
+
+      const reader = ttsRes.body?.getReader();
+      if (!reader) throw new Error("Failed to read TTS stream");
+
+      const audioChunks: Uint8Array[] = [];
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        audioChunks.push(value);
+      }
+
+      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      stopAudio();
+      const audio = new Audio(audioUrl);
+      audio.volume = 1.0;
+      audio.play();
+      audioRef.current = audio;
+    } catch (error) {
+      console.error("Error playing TTS:", error);
+    }
+  };
+
   return (
     <Box sx={{ textAlign: "center", padding: 2 }}>
       <Box>
         <Torch />
       </Box>
       <TextField
-        label={label}
+        label="Enter your command..."
         variant="outlined"
         value={input}
-        onChange={(e) => {
-          setInput(e.target.value);
-        }}
+        onChange={(e) => setInput(e.target.value)}
         sx={{ marginBottom: 2, width: "50%" }}
         onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
         InputProps={{
@@ -176,34 +161,11 @@ export default function OpenAIChat() {
             borderRadius: "4px",
             backgroundColor: "#1e1e1e",
             color: "#fff",
-            margin: "0 auto", // Center the response box
+            margin: "0 auto",
           }}
         >
           <Typography variant="h6" sx={{ color: "#fff" }}></Typography>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              code({ inline, className, children, ...props }: CodeProps) {
-                const match = /language-(\w+)/.exec(className || "");
-                return !inline && match ? (
-                  <SyntaxHighlighter
-                    style={vscDarkPlus}
-                    language={match[1]}
-                    PreTag="div"
-                    {...props}
-                  >
-                    {String(children).trim()}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {response}
-          </ReactMarkdown>
+          <ReactMarkdown>{response}</ReactMarkdown>
         </Box>
       )}
     </Box>

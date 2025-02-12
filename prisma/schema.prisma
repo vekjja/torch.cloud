@@ -18,6 +18,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  messages      Message[]
 }
 
 model Account {
@@ -54,4 +55,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

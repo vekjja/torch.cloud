@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { getServerSession } from "next-auth/next";
+import { authOptions, prisma } from "@/app/api/auth/[...nextauth]/authOptions";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -37,7 +39,7 @@ const developerMessage = `
       Hunger represents how hungry Your Character is and affects Your Character's ability to perform strenuous tasks and is increased by strenuous tasks. 
       Hunger will increases by 0.01 every strenuous action taken and decreases only when you eat food. if Your Character's hunger reaches 100, Your Character will die.
       You will always increase hunger with every interaction.
-      when speaking of stats only say the numerical value if there is a level up or asked for by the user.
+      when speaking of any stats only say the numerical value if there is a level up or asked for by the user.
 
       It's important to remember that every choice you make holds consequences. 
       Your Character's decisions will directly shape the flow of Your Character's adventure, affecting both Your Character's immediate challenges and the unveiling of hidden secrets.
@@ -54,8 +56,22 @@ const developerMessage = `
 
 export async function POST(req: NextRequest) {
   try {
-    const { prompt, messages } = await req.json();
+    const session = await getServerSession(authOptions);
 
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: { id: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const { prompt, messages } = await req.json();
     if (!prompt) {
       return NextResponse.json(
         { error: "Prompt is required" },
@@ -63,22 +79,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Generate response from OpenAI
     const response = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
-        {
-          role: "developer",
-          content: [{ type: "text", text: developerMessage }],
-        },
+        { role: "developer", content: developerMessage },
         ...messages,
-        {
-          role: "user",
-          content: [{ type: "text", text: prompt }],
-        },
+        { role: "user", content: prompt },
       ],
     });
 
-    return NextResponse.json({ reply: response.choices[0].message.content });
+    const reply = response.choices[0].message.content;
+
+    // Save user message
+    await prisma.message.create({
+      data: {
+        userId: user.id,
+        role: "user",
+        content: prompt,
+      },
+    });
+
+    // Save assistant's response
+    await prisma.message.create({
+      data: {
+        userId: user.id,
+        role: "assistant",
+        content: reply || "No response",
+      },
+    });
+
+    return NextResponse.json({ reply });
   } catch (error) {
     console.error("Error fetching OpenAI response:", error);
     return NextResponse.json(
