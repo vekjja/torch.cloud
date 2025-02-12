@@ -24,7 +24,7 @@ export default async function HomePage() {
               Torch Cloud
             </Typography>
             <Typography variant="body1" gutterBottom>
-              the adventure Begins
+              Adventure Begins
             </Typography>
             <Torch />
           </Box>

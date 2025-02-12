@@ -37,6 +37,7 @@ const developerMessage = `
       Hunger represents how hungry Your Character is and affects Your Character's ability to perform strenuous tasks and is increased by strenuous tasks. 
       Hunger will increases by 0.01 every strenuous action taken and decreases only when you eat food. if Your Character's hunger reaches 100, Your Character will die.
       You will always increase hunger with every interaction.
+      when speaking of stats only say the numerical value if there is a level up or asked for by the user.
 
       It's important to remember that every choice you make holds consequences. 
       Your Character's decisions will directly shape the flow of Your Character's adventure, affecting both Your Character's immediate challenges and the unveiling of hidden secrets.

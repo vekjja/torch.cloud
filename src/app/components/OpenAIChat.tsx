@@ -121,6 +121,7 @@ export default function OpenAIChat() {
 
       // Play the streamed audio
       const audio = new Audio(audioUrl);
+      audio.volume = 1.0;
       audio.play();
       audioRef.current = audio; // Store the audio instance
 
@@ -170,10 +171,12 @@ export default function OpenAIChat() {
             marginTop: 2,
             textAlign: "left",
             padding: 2,
+            width: "72vw",
             border: "1px solid #ddd",
             borderRadius: "4px",
             backgroundColor: "#1e1e1e",
             color: "#fff",
+            margin: "0 auto", // Center the response box
           }}
         >
           <Typography variant="h6" sx={{ color: "#fff" }}></Typography>
