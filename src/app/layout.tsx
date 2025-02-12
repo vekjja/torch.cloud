@@ -6,7 +6,12 @@ import { Box, Link, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "Torch Cloud",
-  description: "The Cloud Behind The Couch",
+  description: "the adventure Begins",
+  icons: {
+    icon: "/favicon.png", // Standard favicon
+    shortcut: "/favicon.png",
+    apple: "/favicon.png", // Apple touch icon
+  },
 };
 
 export default function RootLayout({
