@@ -43,9 +43,14 @@ export default function OpenAIChat() {
 
     const data: Message[] = await res.json();
     messages.current = data;
-    setResponse(
-      messages.current.map((m) => `${m.role}: ${m.content}`).join("\n")
-    );
+
+    // Find the last assistant message and display it
+    const lastAssistantMessage = data
+      .reverse()
+      .find((msg) => msg.role === "assistant");
+    if (lastAssistantMessage) {
+      setResponse(lastAssistantMessage.content);
+    }
   };
 
   const stopAudio = () => {
@@ -75,12 +80,12 @@ export default function OpenAIChat() {
       messages.current.push({ role: "user", content: input });
       messages.current.push({ role: "assistant", content: data.reply });
 
-      // Fetch and Play TTS
+      // Play TTS
       await playTTS(data.reply);
 
-      // Update response
+      // Set only the last assistant message
       setResponse(data.reply || "No response received");
-      // setInput("");
+      setInput("");
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
