@@ -17,7 +17,7 @@ export default function AudioControls() {
           value={bgmVolume}
           min={0}
           max={1}
-          step={0.05}
+          step={0.0009}
           onChange={(_, value) => setBgmVolume(value as number)}
           sx={{ width: 150 }}
         />

@@ -46,7 +46,9 @@ export default function OpenAIChat() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [label, setLabel] = useState(labels[0]);
-  const messages = useRef<{ role: string; content: string }[]>([]);
+  const messages = useRef<
+    { role: string; content: [{ type: string; text: string }] }[]
+  >([]);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Store current audio instance
 
   useEffect(() => {
@@ -78,8 +80,14 @@ export default function OpenAIChat() {
       });
 
       const data = await res.json();
-      messages.current.push({ role: "user", content: input });
-      messages.current.push({ role: "assistant", content: data.reply });
+      messages.current.push({
+        role: "user",
+        content: [{ type: "text", text: input }],
+      });
+      messages.current.push({
+        role: "assistant",
+        content: [{ type: "text", text: data.reply }],
+      });
 
       // Fetch TTS Stream
       const ttsRes = await fetch("/api/v1/openaiTTS", {

@@ -25,8 +25,8 @@ export default function TopBar({ session }: TopBarProps) {
             <Typography variant="h6" component="div">
               Welcome, {session.user?.name}
             </Typography>
-            <Settings />
             <Box sx={{ flexGrow: 1 }} />
+            <Settings />
             <DonateButton />
             <SignOutButton />
           </Box>
