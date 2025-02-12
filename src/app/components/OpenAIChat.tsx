@@ -1,32 +1,94 @@
-// src/app/components/SignOutButton.tsx
 "use client";
 
-import { Box } from "@mui/material";
-import CloudCicle from "@mui/icons-material/CloudCircle";
+import { useState } from "react";
+import { Box, TextField, Button, Typography } from "@mui/material";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function OpenAIChat() {
-  async function getChatCompletion() {
-    // const response = await openai.chat.completions.create({
-    //   model: "gpt-4-turbo",
-    //   messages: [{ role: "user", content: "Tell me a joke" }],
-    // });
-    // console.log(response.choices[0].message.content);
-  }
+  const [input, setInput] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!input.trim()) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/v1/openai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: input }),
+      });
+
+      const data = await res.json();
+      setResponse(data.reply || "No response received");
+    } catch (error) {
+      console.error("Error:", error);
+      setResponse("Error processing request");
+    }
+
+    setLoading(false);
+  };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "50vh",
-        padding: 1,
-        textAlign: "center",
-      }}
-    >
-      <Box sx={{ width: "50vw" }}>
-        <CloudCicle onClick={getChatCompletion} />
-      </Box>
+    <Box sx={{ textAlign: "center", padding: 2 }}>
+      <TextField
+        label="Ask OpenAI"
+        variant="outlined"
+        fullWidth
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        sx={{ marginBottom: 2 }}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Send"}
+      </Button>
+
+      {response && (
+        <Box
+          sx={{
+            marginTop: 2,
+            textAlign: "left",
+            padding: 2,
+            border: "1px solid #ddd",
+            borderRadius: "4px",
+          }}
+        >
+          <Typography variant="h6">Response:</Typography>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlighter
+                    style={vscDarkPlus} // Change theme here
+                    language={match[1]}
+                    PreTag="div"
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          >
+            {response}
+          </ReactMarkdown>
+        </Box>
+      )}
     </Box>
   );
 }
