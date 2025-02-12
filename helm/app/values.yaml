@@ -1,0 +1,141 @@
+# Default values for torch.cloud.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+#  helm upgrade --install torch-cloud . -f values.yaml
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+image:
+  repository: ghcr.io/seemywingz/torch.cloud
+  pullPolicy: Always
+  tag: "development"
+
+imagePullSecrets:
+- name: ghcr-secret
+
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the srvice account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {} # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+- name: NODE_ENV
+  value: production
+- name: DATABASE_URL
+  valueFrom:
+    secretKeyRef:
+      name: psql-db-url
+      key: url
+- name: NEXTAUTH_URL
+  value: https://torch.cloud
+- name: NEXTAUTH_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: nextauth-client-secret
+      key: client-secret
+- name: GOOGLE_CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: google-client-id
+      key: client-id
+- name: GOOGLE_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: google-client-secret
+      key: client-secret
+- name: LINKEDIN_CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: linkedin-client-id
+      key: client-id
+- name: LINKEDIN_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: linkedin-client-secret
+      key: client-secret
+- name: DISCORD_CLIENT_ID
+  valueFrom:
+    secretKeyRef:
+      name: discord-client-id
+      key: client-id
+- name: DISCORD_CLIENT_SECRET
+  valueFrom:
+    secretKeyRef:
+      name: discord-client-secret
+      key: client-secret
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: { cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production" }
+  hosts:
+  - host: torch.cloud
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - secretName: torch.cloud-tls
+    hosts:
+    - torch.cloud
+
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 18
+  periodSeconds: 10
+  failureThreshold: 30
+
+startupProbe:
+  httpGet:
+    path: /
+    port: http
+  initialDelaySeconds: 9
+  periodSeconds: 10
+  failureThreshold: 30
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+volumes: []
+volumeMounts: []
+nodeSelector: {}
+tolerations: []
+affinity: {}

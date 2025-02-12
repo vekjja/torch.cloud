@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    container_name: torch-cloud
+    ports:
+    - "3000:3000"
+    env_file:
+    - .env
