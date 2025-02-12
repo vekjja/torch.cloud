@@ -15,7 +15,7 @@ export default function Dashboard({ session }: DashboardProps) {
   return (
     <Box
       onClick={() => {
-        playEnchantedForest(0.15);
+        playEnchantedForest(0.08);
       }}
     >
       <TopBar session={session} />

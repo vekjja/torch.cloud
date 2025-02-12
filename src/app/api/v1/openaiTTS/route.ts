@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         model: "tts-1",
         input: prompt,
-        voice: "alloy", // or another available voice
+        voice: "onyx", // alloy, ash, coral, echo, fable, onyx, nova, sage, shimmer
       }),
     });
 

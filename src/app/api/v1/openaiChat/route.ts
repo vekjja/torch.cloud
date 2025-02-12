@@ -5,18 +5,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export async function POST(req: NextRequest) {
-  try {
-    const { prompt } = await req.json();
-
-    if (!prompt) {
-      return NextResponse.json(
-        { error: "Prompt is required" },
-        { status: 400 }
-      );
-    }
-
-    const systemMessage = `
+const systemMessage = `
       You are the narrator and won't accept any answers that are not relevant to the current story or anything that wasn't mentioned yet.
       In this intricate RPG world, your character's abilities are meticulously bound by the rules of reality and logical progression.
       Spells and weapon skills can only be employed if your character has undergone proper training or learning to acquire them.
@@ -51,6 +40,17 @@ export async function POST(req: NextRequest) {
       only provide the stats if asked or the character leveled up.
     `;
 
+export async function POST(req: NextRequest) {
+  try {
+    const { prompt, messages } = await req.json();
+
+    if (!prompt) {
+      return NextResponse.json(
+        { error: "Prompt is required" },
+        { status: 400 }
+      );
+    }
+
     const response = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
           role: "user",
           content: prompt,
         },
+        ...messages,
       ],
     });
 

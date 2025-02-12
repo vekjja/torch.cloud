@@ -19,9 +19,14 @@ export default function OpenAIChat() {
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const messages = useRef<{ role: string; content: string }[]>([]);
 
   const handleSubmit = async () => {
     menuSelect(0.8);
+    // stop play in straming audio
+    const audioElements = document.querySelectorAll("audio");
+    audioElements.forEach((audio) => audio.pause());
+
     if (!input.trim()) return;
     setResponse("");
     setLoading(true);
@@ -31,10 +36,12 @@ export default function OpenAIChat() {
       const res = await fetch("/api/v1/openaiChat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: input }),
+        body: JSON.stringify({ prompt: input, messages: messages.current }),
       });
 
       const data = await res.json();
+      messages.current.push({ role: "user", content: input });
+      messages.current.push({ role: "assistant", content: data.reply });
 
       // Fetch TTS Stream
       const ttsRes = await fetch("/api/v1/openaiTTS", {
@@ -48,8 +55,6 @@ export default function OpenAIChat() {
       }
 
       // Create a stream and play audio while loading
-      // const audioContext = new AudioContext();
-      // const source = audioContext.createBufferSource();
       const reader = ttsRes.body?.getReader();
 
       if (!reader) {
@@ -113,9 +118,7 @@ export default function OpenAIChat() {
             color: "#fff",
           }}
         >
-          <Typography variant="h6" sx={{ color: "#fff" }}>
-            Response:
-          </Typography>
+          <Typography variant="h6" sx={{ color: "#fff" }}></Typography>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
