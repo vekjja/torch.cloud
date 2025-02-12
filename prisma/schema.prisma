@@ -16,7 +16,7 @@ model User {
   email         String   @unique
   emailVerified DateTime?
   image         String?
-  actionPoints  Int      @default(10)
+  actionPoints  Int      @default(30)
   accounts      Account[]
   sessions      Session[]
   messages      Message[]

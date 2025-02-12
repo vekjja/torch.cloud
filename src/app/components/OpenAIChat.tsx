@@ -24,9 +24,9 @@ export default function OpenAIChat() {
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [actionPoints, setActionPoints] = useState<number | null>(null);
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [actionPoints, setActionPoints] = useState(0);
 
   useEffect(() => {
     if (session) {
@@ -36,34 +36,32 @@ export default function OpenAIChat() {
   }, [session]);
 
   const fetchActionPoints = async () => {
-    const res = await fetch("/api/action-points");
+    try {
+      const res = await fetch("/api/action-points");
+      if (!res.ok) throw new Error("Failed to fetch action points");
 
-    if (!res.ok) {
-      console.error("Failed to fetch action points");
-      return;
+      const data = await res.json();
+      setActionPoints(data.actionPoints);
+    } catch (error) {
+      console.error("Error fetching action points:", error);
+      setActionPoints(0);
     }
-
-    const data = await res.json();
-    setActionPoints(data.actionPoints);
   };
 
   const fetchMessages = async () => {
-    const res = await fetch("/api/v1/messages");
+    try {
+      const res = await fetch("/api/v1/messages");
+      if (!res.ok) throw new Error("Failed to fetch messages");
 
-    if (!res.ok) {
-      console.error("Failed to fetch messages");
-      return;
-    }
+      const data: Message[] = await res.json();
+      messages.current = data;
 
-    const data: Message[] = await res.json();
-    messages.current = data;
-
-    // Find the last assistant message and display it
-    const lastAssistantMessage = data
-      .reverse()
-      .find((msg) => msg.role === "assistant");
-    if (lastAssistantMessage) {
-      setResponse(lastAssistantMessage.content);
+      const lastAssistantMessage = data
+        .reverse()
+        .find((msg) => msg.role === "assistant");
+      if (lastAssistantMessage) setResponse(lastAssistantMessage.content);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
     }
   };
 
@@ -78,18 +76,20 @@ export default function OpenAIChat() {
   const handleSubmit = async () => {
     menuSelect();
     if (!input.trim()) return;
+    if (actionPoints === null || actionPoints <= 0) {
+      setResponse("⚠️ Not enough Action Points to perform this action.");
+      return;
+    }
+
     stopAudio();
     setInput("");
     setResponse("🛡️ Action Taken 🗡️  " + input);
     setLoading(true);
 
-    if (actionPoints <= 0) {
-      setResponse("Not enough Action Points to perform this action.");
-      return;
-    }
+    // **Immediately decrement AP locally for UI responsiveness**
+    setActionPoints((prev) => (prev !== null ? prev - 1 : 0));
 
     try {
-      // Fetch OpenAI Chat Response
       const res = await fetch("/api/v1/openaiChat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -97,16 +97,19 @@ export default function OpenAIChat() {
       });
 
       const data = await res.json();
+      if (res.status !== 200) {
+        setResponse(data.error || "Error processing request");
+        return;
+      }
+
       messages.current.push({ role: "user", content: input });
       messages.current.push({ role: "assistant", content: data.reply });
 
-      // Play TTS
       await playTTS(data.reply);
 
-      // Set only the last assistant message
       setResponse(data.reply || "No response received");
-      setInput("");
-      // Fetch updated action points after using one
+
+      // **Re-fetch AP from the database**
       fetchActionPoints();
     } catch (error) {
       console.error("Error:", error);
@@ -169,9 +172,11 @@ export default function OpenAIChat() {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
-                disabled={loading}
+                disabled={loading || actionPoints === 0}
               >
-                {loading ? "Loading..." : "Take Action"}
+                {loading
+                  ? "Loading..."
+                  : `Action Points: ${actionPoints ?? "..."}`}
               </Button>
             </InputAdornment>
           ),
