@@ -3,7 +3,8 @@
 # Get the current git IMG_TAG
 IMG_TAG=local-build
 
+# --platform linux/amd64,linux/arm64 \
 docker buildx build \
-    --platform linux/amd64,linux/arm64 \
+    --platform linux/arm64 \
     -t ghcr.io/seemywingz/torch.cloud:$IMG_TAG \
     --push .

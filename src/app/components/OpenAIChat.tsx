@@ -83,7 +83,7 @@ export default function OpenAIChat() {
 
     stopAudio();
     setInput("");
-    setResponse("🛡️ Action Taken 🗡️  " + input);
+    setResponse("🛡️ Action Point Used 🗡️  " + input);
     setLoading(true);
 
     // **Immediately decrement AP locally for UI responsiveness**

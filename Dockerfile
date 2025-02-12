@@ -1,14 +1,17 @@
 # 1. Build stage
 FROM node:23-alpine AS builder
 
+ENV OPENAI_API_KEY="sk-..."
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy source code
+# Copy all files not in .dockerignore
 COPY . .
+
 # Generate Prisma client
 RUN npx prisma generate
+
 # Build the Next.js app (production build)
 RUN npm run build
 
