@@ -65,7 +65,8 @@ export default function OpenAIChat() {
     menuSelect();
     if (!input.trim()) return;
     stopAudio();
-    setResponse("");
+    setInput("");
+    setResponse("🛡️ Action Taken 🗡️  " + input);
     setLoading(true);
 
     try {

@@ -22,7 +22,7 @@ const bgmFiles = [
 
 export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [bgmVolume, setBgmVolume] = useState(0.027);
-  const [sfxVolume, setSfxVolume] = useState(0.3);
+  const [sfxVolume, setSfxVolume] = useState(0.1);
   const [currentBGM, setCurrentBGM] = useState<HTMLAudioElement | null>(null);
 
   let igniteSound: HTMLAudioElement | null = null;
