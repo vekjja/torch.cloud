@@ -78,6 +78,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Decrement action points
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { actionPoints: user.actionPoints - 1 },
+    });
+
     const { prompt, messages } = await req.json();
     if (!prompt) {
       return NextResponse.json(
