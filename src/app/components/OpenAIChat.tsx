@@ -23,6 +23,7 @@ export default function OpenAIChat() {
   const handleSubmit = async () => {
     menuSelect(0.8);
     if (!input.trim()) return;
+    setResponse("");
     setLoading(true);
 
     try {
