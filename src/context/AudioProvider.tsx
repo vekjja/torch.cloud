@@ -46,7 +46,6 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
 
       const newBGM = new Audio(selectedBGM);
       newBGM.volume = bgmVolume;
-      newBGM.loop = true;
       newBGM.play();
 
       if (currentBGM) {

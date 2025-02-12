@@ -26,12 +26,26 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [actionPoints, setActionPoints] = useState(0);
 
   useEffect(() => {
     if (session) {
+      fetchActionPoints();
       fetchMessages();
     }
   }, [session]);
+
+  const fetchActionPoints = async () => {
+    const res = await fetch("/api/action-points");
+
+    if (!res.ok) {
+      console.error("Failed to fetch action points");
+      return;
+    }
+
+    const data = await res.json();
+    setActionPoints(data.actionPoints);
+  };
 
   const fetchMessages = async () => {
     const res = await fetch("/api/v1/messages");
@@ -69,6 +83,11 @@ export default function OpenAIChat() {
     setResponse("🛡️ Action Taken 🗡️  " + input);
     setLoading(true);
 
+    if (actionPoints <= 0) {
+      setResponse("Not enough Action Points to perform this action.");
+      return;
+    }
+
     try {
       // Fetch OpenAI Chat Response
       const res = await fetch("/api/v1/openaiChat", {
@@ -87,6 +106,8 @@ export default function OpenAIChat() {
       // Set only the last assistant message
       setResponse(data.reply || "No response received");
       setInput("");
+      // Fetch updated action points after using one
+      fetchActionPoints();
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");

@@ -1,7 +1,15 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || !session.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { prompt } = await req.json();
     if (!prompt) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });

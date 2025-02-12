@@ -64,11 +64,18 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      select: { id: true },
+      select: { id: true, actionPoints: true },
     });
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (user.actionPoints <= 0) {
+      return NextResponse.json(
+        { error: "Not enough Action Points" },
+        { status: 403 }
+      );
     }
 
     const { prompt, messages } = await req.json();
