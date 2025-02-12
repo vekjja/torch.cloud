@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Box,
   TextField,
@@ -22,12 +22,35 @@ interface CodeProps {
   children?: React.ReactNode;
 }
 
+const labels = [
+  "What will you do...",
+  "Your Journey Begins...",
+  "Enter your command...",
+  "What is your next move...",
+  "Type your action...",
+  "What's next...",
+  "What will you do next...",
+  "Enter your next command...",
+  "Make a choice...",
+  "The choice is yours...",
+  "Decide your fate...",
+  "Create your destiny...",
+  "Choose your path...",
+  "Select your action...",
+  "Decide your own fate...",
+];
+
 export default function OpenAIChat() {
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
+  const [label, setLabel] = useState(labels[0]);
   const messages = useRef<{ role: string; content: string }[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null); // Store current audio instance
+
+  useEffect(() => {
+    setLabel(labels[Math.floor(Math.random() * labels.length)]);
+  }, []);
 
   const stopAudio = () => {
     if (audioRef.current) {
@@ -39,7 +62,7 @@ export default function OpenAIChat() {
 
   const handleSubmit = async () => {
     menuSelect(0.8);
-
+    setLabel(labels[Math.floor(Math.random() * labels.length)]);
     if (!input.trim()) return;
     stopAudio(); // Stop any currently playing audio
     setResponse("");
@@ -108,7 +131,7 @@ export default function OpenAIChat() {
         <Torch />
       </Box>
       <TextField
-        label="Your Journey Begins..."
+        label={label}
         variant="outlined"
         value={input}
         onChange={(e) => {
