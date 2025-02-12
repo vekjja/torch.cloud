@@ -1,12 +1,19 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { menuSelect } from "@/utils/audio";
+import Torch from "../three/Torch";
 
 // Explicitly define types for `code` component props
 interface CodeProps {
@@ -20,14 +27,21 @@ export default function OpenAIChat() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const messages = useRef<{ role: string; content: string }[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Store current audio instance
+
+  const stopAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset audio position
+      audioRef.current = null;
+    }
+  };
 
   const handleSubmit = async () => {
     menuSelect(0.8);
-    // stop play in straming audio
-    const audioElements = document.querySelectorAll("audio");
-    audioElements.forEach((audio) => audio.pause());
 
     if (!input.trim()) return;
+    stopAudio(); // Stop any currently playing audio
     setResponse("");
     setLoading(true);
 
@@ -76,7 +90,9 @@ export default function OpenAIChat() {
       // Play the streamed audio
       const audio = new Audio(audioUrl);
       audio.play();
-      // display the response
+      audioRef.current = audio; // Store the audio instance
+
+      // Display the response
       setResponse(data.reply || "No response received");
     } catch (error) {
       console.error("Error:", error);
@@ -88,23 +104,33 @@ export default function OpenAIChat() {
 
   return (
     <Box sx={{ textAlign: "center", padding: 2 }}>
+      <Box>
+        <Torch />
+      </Box>
       <TextField
         label="Your Journey Begins..."
         variant="outlined"
-        fullWidth
         value={input}
-        onChange={(e) => setInput(e.target.value)}
-        sx={{ marginBottom: 2 }}
+        onChange={(e) => {
+          setInput(e.target.value);
+        }}
+        sx={{ marginBottom: 2, width: "50%" }}
         onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Loading..." : "Take Action"}
+              </Button>
+            </InputAdornment>
+          ),
+        }}
       />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Take Action"}
-      </Button>
 
       {response && (
         <Box

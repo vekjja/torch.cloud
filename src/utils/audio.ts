@@ -20,9 +20,9 @@ export function menuSelect(volume: number = 1.0) {
   }
 }
 
-export function lightTorch() {
+export function lightTorch(volume: number = 1.0) {
   if (ignite) {
-    ignite.volume = 1.0;
+    ignite.volume = volume;
     ignite.play();
     ignite.onended = () => {
       ignite?.remove(); // Cleanup after playing
@@ -31,7 +31,7 @@ export function lightTorch() {
 }
 
 export function playMagicForrest(volume: number = 0.5) {
-  if (magicForrest) {
+  if (magicForrest && magicForrest.paused) {
     magicForrest.volume = volume;
     magicForrest.play();
     magicForrest.onended = () => {
@@ -41,11 +41,20 @@ export function playMagicForrest(volume: number = 0.5) {
 }
 
 export function playEnchantedForest(volume: number = 0.5) {
-  if (enchantedForest) {
+  if (enchantedForest && enchantedForest.paused) {
     enchantedForest.volume = volume;
     enchantedForest.play();
     enchantedForest.onended = () => {
       enchantedForest?.remove(); // Cleanup after playing
     };
+  }
+}
+
+export function playRandomForest(volume: number = 0.5) {
+  const random = Math.random();
+  if (random > 0.5) {
+    playMagicForrest(volume);
+  } else {
+    playEnchantedForest(volume);
   }
 }

@@ -8,7 +8,7 @@ export default createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#B17919",
+      main: "#B56719B7",
     },
     secondary: {
       main: "#414141",

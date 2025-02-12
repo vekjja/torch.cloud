@@ -97,7 +97,7 @@ export default function Torch() {
   }, [animate]);
 
   function handleClick() {
-    lightTorch(); // Plays torch lighting sound
+    lightTorch(0.27); // Plays torch lighting sound
   }
 
   return (

@@ -38,6 +38,9 @@ const systemMessage = `
       May your journey be both thrilling and strategic as you navigate this richly detailed realm!
 
       only provide the stats if asked or the character leveled up.
+      don't ignore the users questions on real life subjects if relevant to the story.
+
+      the output supports markdown and html.
     `;
 
 export async function POST(req: NextRequest) {
