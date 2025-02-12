@@ -7,6 +7,13 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
+// Explicitly define types for `code` component props
+interface CodeProps {
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 export default function OpenAIChat() {
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
@@ -42,6 +49,7 @@ export default function OpenAIChat() {
         value={input}
         onChange={(e) => setInput(e.target.value)}
         sx={{ marginBottom: 2 }}
+        onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
       />
       <Button
         variant="contained"
@@ -60,22 +68,26 @@ export default function OpenAIChat() {
             padding: 2,
             border: "1px solid #ddd",
             borderRadius: "4px",
+            backgroundColor: "#1e1e1e",
+            color: "#fff",
           }}
         >
-          <Typography variant="h6">Response:</Typography>
+          <Typography variant="h6" sx={{ color: "#fff" }}>
+            Response:
+          </Typography>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             components={{
-              code({ node, inline, className, children, ...props }) {
+              code({ inline, className, children, ...props }: CodeProps) {
                 const match = /language-(\w+)/.exec(className || "");
                 return !inline && match ? (
                   <SyntaxHighlighter
-                    style={vscDarkPlus} // Change theme here
+                    style={vscDarkPlus}
                     language={match[1]}
                     PreTag="div"
                     {...props}
                   >
-                    {String(children).replace(/\n$/, "")}
+                    {String(children).trim()}
                   </SyntaxHighlighter>
                 ) : (
                   <code className={className} {...props}>
