@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import SignInButton from "./components/SignInButton";
 import GitHubButton from "./components/GitHubButton";
-import Cloud from "./three/GLTF";
+import GLTFModel from "./three/GLTF";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -37,7 +37,7 @@ export default async function HomePage() {
             position: "relative",
           }}
         >
-          <Cloud alpha={true} />
+          <GLTFModel alpha={true} model={"torch"} />
         </Box>
       </Box>
     </Box>

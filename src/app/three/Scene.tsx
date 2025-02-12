@@ -10,7 +10,7 @@ interface ThreeSceneProps {
   alpha?: boolean;
   width?: number;
   height?: number;
-  renderFunction?: (
+  renderScene?: (
     scene: THREE.Scene,
     camera: THREE.Camera,
     renderer: THREE.WebGLRenderer,
@@ -23,7 +23,7 @@ const ThreeScene = ({
   alpha = false,
   width,
   height,
-  renderFunction = undefined,
+  renderScene,
 }: ThreeSceneProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -54,9 +54,8 @@ const ThreeScene = ({
     rendererRef.current = renderer;
     mount.appendChild(renderer.domElement);
 
-    // Call Custom Render Function if provided
-    if (typeof renderFunction === "function") {
-      renderFunction(scene, camera, renderer, requestRef);
+    if (renderScene) {
+      renderScene(scene, camera, renderer, requestRef);
     }
 
     // Resize Handler
@@ -83,7 +82,7 @@ const ThreeScene = ({
       if (initialRequestId) cancelAnimationFrame(initialRequestId);
       window.removeEventListener("resize", handleResize);
     };
-  }, [color, alpha, width, height, renderFunction]);
+  }, [color, alpha, width, height, renderScene]);
 
   return (
     <Box

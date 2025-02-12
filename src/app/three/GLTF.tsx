@@ -11,60 +11,41 @@ interface Position {
   z: number;
 }
 
-interface CloudProps {
+interface GLTFProps {
   color?: number;
   alpha?: boolean;
   width?: number;
   height?: number;
+  model: string;
   position?: Position;
 }
 
-function renderCloud(
-  scene: THREE.Scene,
-  camera: THREE.Camera,
-  renderer: THREE.WebGLRenderer,
-  requestRef: { current: number | null }
-) {
-  const loader = new GLTFLoader();
-  loader.load(
-    `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/gltf/torch/scene.gltf`, // Ensure the correct path
-    (gltf) => {
+export default function GLTFModel({
+  color = 0xffff,
+  alpha = false,
+  width,
+  height,
+  model,
+}: GLTFProps) {
+  // Render Scene
+  const renderScene = (
+    scene: THREE.Scene,
+    camera: THREE.Camera,
+    renderer: THREE.WebGLRenderer,
+    requestRef: { current: number | null }
+  ) => {
+    // Load GLTF Model
+    const loader = new GLTFLoader();
+    loader.load(`/gltf/${model}/scene.gltf`, (gltf) => {
       const model = gltf.scene;
-      // Compute model bounding box
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-
-      // Normalize size
-      const maxSize = Math.max(size.x * 0.8, size.y * 0.08, size.z);
-      const scaleFactor = 1 / maxSize; // Adjust scale to fit viewport
-      model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-      // Recenter model to the origin
-      model.position.sub(center.multiplyScalar(scaleFactor));
-
-      // Ensure model receives and casts shadows
-      model.traverse((child) => {
-        if ((child as THREE.Mesh).isMesh) {
-          const mesh = child as THREE.Mesh;
-          mesh.castShadow = true;
-          mesh.receiveShadow = true;
-        }
-      });
-
-      model.position.set(0, -3, 0);
+      model.position.set(0, -6, -3);
       scene.add(model);
-
-      // Adjust Camera Positioning
-      camera.position.set(0, 0, 3); // Move camera back to fit model
-      camera.lookAt(new THREE.Vector3(0, 0, 0));
-
       // Add Lighting
       const light = new THREE.DirectionalLight(0xffffff, 1);
       light.position.set(0, 10, 10);
       scene.add(light);
 
-      const bLight = new THREE.DirectionalLight(0xff640a, 0.8);
+      const bLight = new THREE.DirectionalLight(0xfb8f4c, 0.8);
       bLight.position.set(3, -10, 10);
       scene.add(bLight);
 
@@ -84,27 +65,16 @@ function renderCloud(
         requestRef.current = requestAnimationFrame(animate);
       };
       animate();
-    },
-    undefined,
-    (error) => {
-      console.error("An error happened", error);
-    }
-  );
-}
+    });
+  };
 
-export default function Cloud({
-  color = 0xffff,
-  alpha = false,
-  width,
-  height,
-}: CloudProps) {
   return (
     <ThreeScene
       color={color}
       alpha={alpha}
       width={width}
       height={height}
-      renderFunction={renderCloud}
+      renderScene={renderScene}
     />
   );
 }
