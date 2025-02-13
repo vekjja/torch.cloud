@@ -15,10 +15,13 @@ import {
   setSfxVolume,
   globalAudioEnabled,
   setGlobalAudioEnabled,
+  globalStopBGM,
+  setGlobalStopBGM,
 } from "@/utils/audio";
 
 export default function AudioControls() {
   const [audioEnabled, setAudioEnabled] = useState(globalAudioEnabled); // Default enabled
+  const [stopBGM, setStopBGM] = useState(globalStopBGM); // Store stopBGM state
   const [bgm, setBgm] = useState(bgmVolume); // Store BGM volume in state
   const [sfx, setSfx] = useState(sfxVolume); // Store SFX volume in state
 
@@ -39,6 +42,11 @@ export default function AudioControls() {
     setSfxVolume(newValue);
   };
 
+  const handleStopBGMChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStopBGM(event.target.checked);
+    setGlobalStopBGM(event.target.checked);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", padding: 2, gap: 2 }}>
       <FormControlLabel
@@ -46,6 +54,11 @@ export default function AudioControls() {
           <Checkbox checked={audioEnabled} onChange={handleAudioToggle} />
         }
         label="Audio"
+      />
+
+      <FormControlLabel
+        control={<Checkbox checked={stopBGM} onChange={handleStopBGMChange} />}
+        label="Stop BGM"
       />
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

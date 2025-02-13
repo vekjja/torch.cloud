@@ -10,8 +10,8 @@ import {
   fadeOutBGM,
   playAudio,
   stopAudio,
+  globalStopBGM,
 } from "@/utils/audio";
-import { get } from "http";
 
 interface Message {
   role: string;
@@ -49,6 +49,7 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
   const [submitLabel, setSubmitLabel] = useState<string>("");
+  const [stopBGM] = useState<boolean>(globalStopBGM);
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -90,11 +91,6 @@ export default function OpenAIChat() {
 
       const data: Message[] = await res.json();
       messages.current = data;
-
-      // const lastAssistantMessage = data
-      //   .reverse()
-      //   .find((msg) => msg.role === "assistant");
-      // if (lastAssistantMessage) setResponse(lastAssistantMessage.content);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -112,7 +108,7 @@ export default function OpenAIChat() {
     playRandomBGM();
     setLoading(true);
     stopAudio(audioRef.current);
-    setResponse("🛡️ Action Point Used 🗡️  " + input);
+    setResponse("\t🗡️🛡️ Action Point Used🛡️🗡️\n" + input);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
 
     try {
@@ -133,7 +129,7 @@ export default function OpenAIChat() {
 
       await playTTS(data.reply);
       setResponse(data.reply);
-      fadeOutBGM();
+      if (stopBGM) fadeOutBGM();
 
       fetchActionPoints();
     } catch (error) {
@@ -216,13 +212,14 @@ export default function OpenAIChat() {
           color="primary"
           onClick={handleSubmit}
           disabled={loading || actionPoints === 0}
+          sx={{ display: input.trim() ? "block" : "none" }}
         >
           {loading ? "Loading..." : `Action Points: ${actionPoints ?? "..."}`}
         </Button>
         <Button
           color="secondary"
           onClick={() => playAudio(audioRef.current)}
-          sx={{ display: loading ? "none" : "block" }}
+          sx={{ display: loading || response === "" ? "none" : "block" }}
         >
           <RecordVoiceOverIcon sx={{ fontSize: 40 }} />
         </Button>

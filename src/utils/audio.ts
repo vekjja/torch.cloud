@@ -3,6 +3,7 @@
 
 export let bgmVolume = 0.27;
 export let sfxVolume = 0.27;
+export let globalStopBGM = true;
 export let globalAudioEnabled = true;
 
 let igniteSound: HTMLAudioElement | null = null;
@@ -36,6 +37,13 @@ export function setGlobalAudioEnabled(enabled: boolean) {
     stopBGM();
   } else {
     console.log("🔊 Audio enabled");
+  }
+}
+
+export function setGlobalStopBGM(stop: boolean) {
+  globalStopBGM = stop;
+  if (globalStopBGM) {
+    stopBGM();
   }
 }
 
@@ -119,7 +127,7 @@ export function stopBGM() {
 }
 
 export function fadeOutBGM() {
-  if (currentBGM) {
+  if (currentBGM && globalStopBGM) {
     let volume = bgmVolume;
     const fadeOut = setInterval(() => {
       volume -= 0.1;
