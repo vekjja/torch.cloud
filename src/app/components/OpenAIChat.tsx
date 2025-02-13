@@ -20,8 +20,7 @@ const labelNames = [
   "What will you do?",
   "What will you choose?",
   "What will you decide?",
-  "What will you create?",
-  "What will you make?",
+  "What world will you create?",
   "How will you tell your story?",
   "How will you create your world?",
   "How will you create your adventure?",
@@ -189,9 +188,12 @@ export default function OpenAIChat() {
           variant="outlined"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          sx={{ width: "50%", marginBottom: 0.1 }}
+          sx={{ width: "72vw", marginBottom: 0.1 }}
           onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
           disabled={loading}
+          multiline // Allow multiline input
+          minRows={1} // Minimum number of rows
+          maxRows={4} // Maximum number of rows
         />
 
         <Button
