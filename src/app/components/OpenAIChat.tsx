@@ -1,13 +1,5 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  InputAdornment,
-} from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import { useAudio } from "@/context/AudioProvider";
@@ -18,6 +10,31 @@ interface Message {
   content: string;
 }
 
+const labelNames = [
+  "Create Your Own Adventure",
+  "Create your destiny",
+  "Create your own story",
+  "Create your own path",
+  "What will you do next?",
+  "What will you do now?",
+  "What will you do?",
+  "What will you choose?",
+  "What will you decide?",
+  "What will you create?",
+  "What will you make?",
+  "How will you tell your story?",
+  "How will you create your world?",
+  "How will you create your adventure?",
+  "How will you create your destiny?",
+  "Create the world you want to see",
+  "Create the world you want to live in",
+  "Create the world you want to explore",
+  "Be the change you want to see",
+  "Be the hero of your own story",
+  "Be the hero of your own adventure",
+  "Be the hero of your own destiny",
+];
+
 export default function OpenAIChat() {
   const { data: session } = useSession();
   const { menuSelect } = useAudio();
@@ -25,6 +42,7 @@ export default function OpenAIChat() {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
+  const [submitLabel, setSubmitLabel] = useState<string>("");
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -32,6 +50,7 @@ export default function OpenAIChat() {
     if (session) {
       fetchActionPoints();
       fetchMessages();
+      setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     }
   }, [session]);
 
@@ -85,8 +104,8 @@ export default function OpenAIChat() {
     setInput("");
     setResponse("🛡️ Action Point Used 🗡️  " + input);
     setLoading(true);
+    setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
 
-    // **Immediately decrement AP locally for UI responsiveness**
     setActionPoints((prev) => (prev !== null ? prev - 1 : 0));
 
     try {
@@ -109,7 +128,6 @@ export default function OpenAIChat() {
 
       setResponse(data.reply || "No response received");
 
-      // **Re-fetch AP from the database**
       fetchActionPoints();
     } catch (error) {
       console.error("Error:", error);
@@ -154,43 +172,46 @@ export default function OpenAIChat() {
 
   return (
     <Box sx={{ textAlign: "center", padding: 2 }}>
-      <Box>
-        <Torch />
-      </Box>
-      <TextField
-        label="Enter your command..."
-        variant="outlined"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        sx={{ marginBottom: 2, width: "50%" }}
-        onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
-        disabled={loading} // Disable input while loading
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-                disabled={loading || actionPoints === 0}
-              >
-                {loading
-                  ? "Loading..."
-                  : `Action Points: ${actionPoints ?? "..."}`}
-              </Button>
-            </InputAdornment>
-          ),
+      <Torch />
+
+      {/* Input & Submit Button Container */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+          marginBottom: 2,
         }}
-      />
+      >
+        <TextField
+          label={submitLabel}
+          variant="outlined"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          sx={{ width: "50%", marginBottom: 0.1 }}
+          onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
+          disabled={loading}
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={loading || actionPoints === 0}
+        >
+          {loading ? "Loading..." : `Action Points: ${actionPoints ?? "..."}`}
+        </Button>
+      </Box>
 
       {response && (
         <Box
           sx={{
             marginTop: 2,
-            textAlign: "left",
+            textAlign: "center",
             padding: 2,
             width: "72vw",
-            border: "1px solid #ddd",
+            border: "1px solid #B56719B7",
             borderRadius: "4px",
             backgroundColor: "#1e1e1e",
             color: "#fff",

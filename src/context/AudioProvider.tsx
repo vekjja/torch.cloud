@@ -36,6 +36,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (currentBGM) {
       currentBGM.volume = bgmVolume;
+      console.log("BGM Volume updated:", bgmVolume); // Debugging
     }
   }, [bgmVolume, currentBGM]);
 

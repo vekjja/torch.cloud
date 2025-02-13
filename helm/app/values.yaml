@@ -9,7 +9,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/seemywingz/torch.cloud
   pullPolicy: Always
-  tag: "development"
+  tag: "local-build"
 
 imagePullSecrets:
 - name: ghcr-secret
@@ -84,6 +84,11 @@ env:
     secretKeyRef:
       name: discord-client-secret
       key: client-secret
+- name: OPENAI_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: openai-api-key
+      key: api-key
 
 ingress:
   enabled: true
