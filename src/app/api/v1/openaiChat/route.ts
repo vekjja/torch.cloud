@@ -78,12 +78,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Decrement action points
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { actionPoints: user.actionPoints - 1 },
-    });
-
     const { prompt, messages } = await req.json();
     if (!prompt) {
       return NextResponse.json(
@@ -92,17 +86,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let reqMessages = [];
+    // if messages > 30, keep only the last 30 messages
+    if (messages.length > 30) {
+      reqMessages = messages.slice(messages.length - 30);
+    }
+
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
       model: "gpt-4-turbo",
       messages: [
         { role: "developer", content: developerMessage },
-        ...messages,
+        ...reqMessages,
         { role: "user", content: prompt },
       ],
     });
 
     const reply = response.choices[0].message.content;
+
+    // Decrement action points
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { actionPoints: user.actionPoints - 1 },
+    });
 
     // Save user message
     await prisma.message.create({

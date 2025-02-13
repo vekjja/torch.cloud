@@ -3,11 +3,10 @@
 import { useState } from "react";
 import { Box, IconButton, Typography, Popover } from "@mui/material";
 import SettingsSuggest from "@mui/icons-material/SettingsSuggest";
-import { useAudio } from "@/context/AudioProvider";
+import { menuSelect } from "@/utils/audio";
 import AudioControls from "./AudioControls";
 
 export default function Settings() {
-  const { menuSelect } = useAudio();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {

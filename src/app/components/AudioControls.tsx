@@ -1,16 +1,39 @@
 "use client";
 
-import React from "react";
-import { Box, Slider, Typography } from "@mui/material";
-import { useAudio } from "@/context/AudioProvider";
+import { useState } from "react";
+import {
+  Box,
+  Slider,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+} from "@mui/material";
+import {
+  bgmVolume,
+  sfxVolume,
+  setBgmVolume,
+  setSfxVolume,
+} from "@/utils/audio";
 
 export default function AudioControls() {
-  const { bgmVolume, sfxVolume, setBgmVolume, setSfxVolume } = useAudio();
+  const [narrationEnabled, setNarrationEnabled] = useState(true); // Default enabled
+  const handleNarrationToggle = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNarrationEnabled(event.target.checked);
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", padding: 2, gap: 2 }}>
-      <Typography variant="h6">Audio Controls</Typography>
-
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={narrationEnabled}
+            onChange={handleNarrationToggle}
+          />
+        }
+        label="Narration"
+      />
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Typography>BGM Volume</Typography>
         <Slider

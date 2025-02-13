@@ -2,8 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
-import { useAudio } from "@/context/AudioProvider";
 import Torch from "../three/Torch";
+import {
+  menuSelect,
+  playRandomBGM,
+  fadeOutBGM,
+  playAudio,
+  stopAudio,
+} from "@/utils/audio";
 
 interface Message {
   role: string;
@@ -36,14 +42,13 @@ const labelNames = [
 
 export default function OpenAIChat() {
   const { data: session } = useSession();
-  const { menuSelect } = useAudio();
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
   const [submitLabel, setSubmitLabel] = useState<string>("");
-  const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const messages = useRef<Message[]>([]);
 
   useEffect(() => {
     if (session) {
@@ -83,14 +88,6 @@ export default function OpenAIChat() {
     }
   };
 
-  const stopAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current = null;
-    }
-  };
-
   const handleSubmit = async () => {
     menuSelect();
     if (!input.trim()) return;
@@ -99,13 +96,12 @@ export default function OpenAIChat() {
       return;
     }
 
-    stopAudio();
+    stopAudio(audioRef.current);
     setInput("");
     setResponse("🛡️ Action Point Used 🗡️  " + input);
     setLoading(true);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
-
-    setActionPoints((prev) => (prev !== null ? prev - 1 : 0));
+    playRandomBGM();
 
     try {
       const res = await fetch("/api/v1/openaiChat", {
@@ -159,11 +155,11 @@ export default function OpenAIChat() {
       const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
 
-      stopAudio();
-      const audio = new Audio(audioUrl);
-      audio.volume = 1.0;
-      audio.play();
-      audioRef.current = audio;
+      stopAudio(audioRef.current);
+      fadeOutBGM();
+
+      audioRef.current = new Audio(audioUrl);
+      playAudio(audioRef.current);
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
@@ -189,7 +185,7 @@ export default function OpenAIChat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           sx={{ width: "72vw", marginBottom: 0.1 }}
-          onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           disabled={loading}
           multiline // Allow multiline input
           minRows={1} // Minimum number of rows

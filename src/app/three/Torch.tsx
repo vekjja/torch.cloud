@@ -4,10 +4,9 @@ import React, { useRef, useEffect, useCallback } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Box } from "@mui/material";
-import { useAudio } from "@/context/AudioProvider";
+import { lightTorch } from "@/utils/audio";
 
 export default function Torch() {
-  const { lightTorch } = useAudio();
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
