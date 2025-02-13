@@ -9,7 +9,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/seemywingz/torch.cloud
   pullPolicy: Always
-  tag: "local-build"
+  tag: "latest"
 
 imagePullSecrets:
 - name: ghcr-secret

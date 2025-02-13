@@ -3,7 +3,13 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import Torch from "../three/Torch";
-import { useAudio } from "@/context/AudioContext";
+import {
+  playMenuSFX,
+  playRandomBGM,
+  fadeOutBGM,
+  playAudio,
+  stopAudio,
+} from "@/utils/audio";
 
 interface Message {
   role: string;
@@ -34,10 +40,6 @@ const labelNames = [
   "Be the hero of your own destiny",
 ];
 
-const isMobileDevice = () => {
-  return /Mobi|Android/i.test(navigator.userAgent);
-};
-
 export default function OpenAIChat() {
   const { data: session } = useSession();
   const [input, setInput] = useState("");
@@ -45,10 +47,8 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
   const [submitLabel, setSubmitLabel] = useState<string>("");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const messages = useRef<Message[]>([]);
-  const { playMenuSFX, playRandomBGM, fadeOutBGM, playAudio, stopAudio } =
-    useAudio();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (session) {
@@ -56,7 +56,6 @@ export default function OpenAIChat() {
       fetchMessages();
       setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     }
-    console.log("Is mobile device:", isMobileDevice());
   }, [session]);
 
   const fetchActionPoints = async () => {
@@ -100,9 +99,9 @@ export default function OpenAIChat() {
     stopAudio(audioRef.current);
     setInput("");
     setResponse("🛡️ Action Point Used 🗡️  " + input);
+    setLoading(true);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     playRandomBGM();
-    setLoading(true);
 
     try {
       const res = await fetch("/api/v1/openaiChat", {
@@ -122,6 +121,7 @@ export default function OpenAIChat() {
 
       await playTTS(data.reply);
       setResponse(data.reply);
+      fadeOutBGM();
 
       fetchActionPoints();
     } catch (error) {
@@ -129,8 +129,6 @@ export default function OpenAIChat() {
       setResponse("Error processing request");
     }
 
-    fadeOutBGM();
-    playAudio(audioRef.current);
     setLoading(false);
   };
 
@@ -158,6 +156,7 @@ export default function OpenAIChat() {
       const audioUrl = URL.createObjectURL(audioBlob);
       audioRef.current = new Audio(audioUrl);
       audioRef.current.volume = 1.0;
+      playAudio(audioRef.current);
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
