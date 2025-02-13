@@ -16,19 +16,19 @@ import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { menuSelect, playRandomBGM } from "@/utils/audio";
+import { playMenuSFX, playRandomBGM } from "@/utils/audio";
 
 export default function SignInButton() {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
-    menuSelect();
+    playMenuSFX();
     playRandomBGM();
     setOpen(true);
   };
 
   const handleClose = () => {
-    menuSelect();
+    playMenuSFX();
     setOpen(false);
   };
 

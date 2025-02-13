@@ -1,7 +1,7 @@
 # 1. Build stage
 FROM node:23-alpine AS builder
 
-ENV OPENAI_API_KEY="sk-..."
+ENV OPENAI_API_KEY=""
 WORKDIR /app
 COPY package*.json ./
 RUN npm install

@@ -21,7 +21,7 @@ if (typeof window !== "undefined") {
   igniteSound = new Audio("/sfx/torch-lighting.mp3");
 }
 
-export function menuSelect() {
+export function playMenuSFX() {
   playAudio(new Audio("/sfx/menu.mp3"), sfxVolume);
 }
 
@@ -45,7 +45,9 @@ export function playAudio(
 ) {
   if (audio && globalAudioEnabled && volume > 0) {
     audio.volume = volume;
-    audio.play();
+    audio.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
     audio.onended = () => {
       audio?.remove();
     };

@@ -1,6 +1,3 @@
-// src/app/components/SignOutButton.tsx
-"use client";
-
 import { signOut } from "next-auth/react";
 import { Button, Box } from "@mui/material";
 

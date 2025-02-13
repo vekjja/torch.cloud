@@ -3,19 +3,19 @@
 import { useState } from "react";
 import { Box, IconButton, Typography, Popover } from "@mui/material";
 import SettingsSuggest from "@mui/icons-material/SettingsSuggest";
-import { menuSelect } from "@/utils/audio";
+import { playMenuSFX } from "@/utils/audio";
 import AudioControls from "./AudioControls";
 
 export default function Settings() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    menuSelect();
+    playMenuSFX();
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    menuSelect();
+    playMenuSFX();
     setAnchorEl(null);
   };
 

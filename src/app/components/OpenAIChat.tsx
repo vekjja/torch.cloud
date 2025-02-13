@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import Torch from "../three/Torch";
 import {
-  menuSelect,
+  playMenuSFX,
   playRandomBGM,
   fadeOutBGM,
   playAudio,
@@ -40,6 +40,10 @@ const labelNames = [
   "Be the hero of your own destiny",
 ];
 
+const isMobileDevice = () => {
+  return /Mobi|Android/i.test(navigator.userAgent);
+};
+
 export default function OpenAIChat() {
   const { data: session } = useSession();
   const [input, setInput] = useState("");
@@ -56,6 +60,7 @@ export default function OpenAIChat() {
       fetchMessages();
       setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     }
+    console.log("Is mobile device:", isMobileDevice());
   }, [session]);
 
   const fetchActionPoints = async () => {
@@ -89,7 +94,7 @@ export default function OpenAIChat() {
   };
 
   const handleSubmit = async () => {
-    menuSelect();
+    playMenuSFX();
     if (!input.trim()) return;
     if (actionPoints === null || actionPoints <= 0) {
       setResponse("⚠️ Not enough Action Points to perform this action.");
@@ -120,8 +125,8 @@ export default function OpenAIChat() {
       messages.current.push({ role: "assistant", content: data.reply });
 
       await playTTS(data.reply);
-
-      setResponse(data.reply || "No response received");
+      setResponse(data.reply);
+      fadeOutBGM();
 
       fetchActionPoints();
     } catch (error) {
@@ -129,6 +134,7 @@ export default function OpenAIChat() {
       setResponse("Error processing request");
     }
 
+    playAudio(audioRef.current);
     setLoading(false);
   };
 
@@ -154,12 +160,7 @@ export default function OpenAIChat() {
 
       const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
-
-      stopAudio(audioRef.current);
-      fadeOutBGM();
-
       audioRef.current = new Audio(audioUrl);
-      playAudio(audioRef.current);
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
