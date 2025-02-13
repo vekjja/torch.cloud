@@ -106,7 +106,6 @@ export default function OpenAIChat() {
     setResponse("🛡️ Action Point Used 🗡️  " + input);
     setLoading(true);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
-    playRandomBGM();
 
     try {
       const res = await fetch("/api/v1/openaiChat", {
@@ -156,6 +155,7 @@ export default function OpenAIChat() {
         if (done) break;
         audioChunks.push(value);
       }
+      playRandomBGM();
 
       const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
