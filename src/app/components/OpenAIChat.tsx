@@ -3,13 +3,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import Torch from "../three/Torch";
-import {
-  playMenuSFX,
-  playRandomBGM,
-  fadeOutBGM,
-  playAudio,
-  stopAudio,
-} from "@/utils/audio";
+import { useAudio } from "@/context/AudioContext";
 
 interface Message {
   role: string;
@@ -53,6 +47,8 @@ export default function OpenAIChat() {
   const [submitLabel, setSubmitLabel] = useState<string>("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const messages = useRef<Message[]>([]);
+  const { playMenuSFX, playRandomBGM, fadeOutBGM, playAudio, stopAudio } =
+    useAudio();
 
   useEffect(() => {
     if (session) {
@@ -104,8 +100,9 @@ export default function OpenAIChat() {
     stopAudio(audioRef.current);
     setInput("");
     setResponse("🛡️ Action Point Used 🗡️  " + input);
-    setLoading(true);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
+    playRandomBGM();
+    setLoading(true);
 
     try {
       const res = await fetch("/api/v1/openaiChat", {
@@ -125,7 +122,6 @@ export default function OpenAIChat() {
 
       await playTTS(data.reply);
       setResponse(data.reply);
-      fadeOutBGM();
 
       fetchActionPoints();
     } catch (error) {
@@ -133,6 +129,8 @@ export default function OpenAIChat() {
       setResponse("Error processing request");
     }
 
+    fadeOutBGM();
+    playAudio(audioRef.current);
     setLoading(false);
   };
 
@@ -155,12 +153,11 @@ export default function OpenAIChat() {
         if (done) break;
         audioChunks.push(value);
       }
-      playRandomBGM();
 
       const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
       audioRef.current = new Audio(audioUrl);
-      playAudio(audioRef.current);
+      audioRef.current.volume = 1.0;
     } catch (error) {
       console.error("Error playing TTS:", error);
     }

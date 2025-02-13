@@ -7,4 +7,5 @@ Dockerfile
 .github
 .gitignore
 .next
+next-env.d.ts
 .vscode

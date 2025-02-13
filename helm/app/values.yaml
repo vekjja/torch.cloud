@@ -116,6 +116,7 @@ livenessProbe:
   httpGet:
     path: /
     port: http
+
 readinessProbe:
   httpGet:
     path: /
@@ -125,7 +126,7 @@ startupProbe:
   httpGet:
     path: /
     port: http
-  initialDelaySeconds: 18
+  initialDelaySeconds: 27
   periodSeconds: 10
   failureThreshold: 30
 
