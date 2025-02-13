@@ -7,10 +7,8 @@ import Torch from "../three/Torch";
 import {
   playMenuSFX,
   playRandomBGM,
-  fadeOutBGM,
-  playAudio,
   stopAudio,
-  globalStopBGM,
+  narrateAudio,
 } from "@/utils/audio";
 
 interface Message {
@@ -49,26 +47,15 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
   const [submitLabel, setSubmitLabel] = useState<string>("");
-  const [stopBGM] = useState<boolean>(globalStopBGM);
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (session) {
+      setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
       fetchActionPoints();
       fetchMessages();
-      setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     }
-    const unlockAudio = () => {
-      const audio = new Audio("/sfx/250-milliseconds-of-silence.mp3"); // A tiny silent MP3 file
-      audio
-        .play()
-        .then(() => console.log("🔊 Audio unlocked"))
-        .catch(() => console.log("🔇 Autoplay blocked"));
-    };
-
-    window.addEventListener("click", unlockAudio, { once: true });
-    return () => window.removeEventListener("click", unlockAudio);
   }, [session]);
 
   const fetchActionPoints = async () => {
@@ -88,7 +75,6 @@ export default function OpenAIChat() {
     try {
       const res = await fetch("/api/v1/messages");
       if (!res.ok) throw new Error("Failed to fetch messages");
-
       const data: Message[] = await res.json();
       messages.current = data;
     } catch (error) {
@@ -129,7 +115,6 @@ export default function OpenAIChat() {
 
       await playTTS(data.reply);
       setResponse(data.reply);
-      if (stopBGM) fadeOutBGM();
 
       fetchActionPoints();
     } catch (error) {
@@ -150,38 +135,28 @@ export default function OpenAIChat() {
 
       if (!ttsRes.ok) throw new Error("Failed to fetch TTS audio");
 
-      const reader = ttsRes.body?.getReader();
-      if (!reader) throw new Error("Failed to read TTS stream");
-
-      const audioChunks: Uint8Array[] = [];
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        audioChunks.push(value);
+      // Convert response body to a blob
+      const audioBlob = await ttsRes.blob();
+      if (audioBlob.size === 0) {
+        throw new Error("Received empty audio file.");
       }
 
-      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+      // Create a URL for the audio and play it
       const audioUrl = URL.createObjectURL(audioBlob);
       audioRef.current = new Audio(audioUrl);
       audioRef.current.volume = 1.0;
-      // simulate user click to play audio
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log("🔊 Audio played successfully");
-          })
-          .catch((error) => {
-            console.error("🔇 Error playing audio:", error);
-          });
-      }
+      narrateAudio(audioRef.current);
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
   };
 
+  const handleNarrateClick = () => {
+    narrateAudio(audioRef.current);
+  };
+
   return (
-    <Box sx={{ textAlign: "center", padding: 2 }}>
+    <Box sx={{ textAlign: "center", padding: 2 }} onClick={playRandomBGM}>
       <Torch />
 
       {/* Input & Submit Button Container */}
@@ -218,7 +193,7 @@ export default function OpenAIChat() {
         </Button>
         <Button
           color="secondary"
-          onClick={() => playAudio(audioRef.current)}
+          onClick={handleNarrateClick}
           sx={{ display: loading || response === "" ? "none" : "block" }}
         >
           <RecordVoiceOverIcon sx={{ fontSize: 40 }} />

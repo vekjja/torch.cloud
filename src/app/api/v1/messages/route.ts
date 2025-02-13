@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions, prisma } from "@/app/api/auth/[...nextauth]/authOptions";
 
+export const maxMessages = 30;
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -20,9 +22,11 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Fetch the user's last maxMessages messages
     const messages = await prisma.message.findMany({
       where: { userId: user.id },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: "desc" },
+      take: maxMessages,
     });
 
     return NextResponse.json(messages);

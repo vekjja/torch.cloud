@@ -7,6 +7,7 @@ import {
   Typography,
   FormControlLabel,
   Checkbox,
+  Button,
 } from "@mui/material";
 import {
   bgmVolume,
@@ -15,13 +16,14 @@ import {
   setSfxVolume,
   globalAudioEnabled,
   setGlobalAudioEnabled,
-  globalStopBGM,
-  setGlobalStopBGM,
+  globalStopBGMNarrate,
+  setGlobalStopBGMNarrate,
+  playRandomBGM,
 } from "@/utils/audio";
 
 export default function AudioControls() {
   const [audioEnabled, setAudioEnabled] = useState(globalAudioEnabled); // Default enabled
-  const [stopBGM, setStopBGM] = useState(globalStopBGM); // Store stopBGM state
+  const [stopBGM, setStopBGM] = useState(globalStopBGMNarrate); // Store stopBGM state
   const [bgm, setBgm] = useState(bgmVolume); // Store BGM volume in state
   const [sfx, setSfx] = useState(sfxVolume); // Store SFX volume in state
 
@@ -44,7 +46,7 @@ export default function AudioControls() {
 
   const handleStopBGMChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStopBGM(event.target.checked);
-    setGlobalStopBGM(event.target.checked);
+    setGlobalStopBGMNarrate(event.target.checked);
   };
 
   return (
@@ -58,7 +60,7 @@ export default function AudioControls() {
 
       <FormControlLabel
         control={<Checkbox checked={stopBGM} onChange={handleStopBGMChange} />}
-        label="Stop BGM"
+        label="Stop BGM on Narration"
       />
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
@@ -84,6 +86,9 @@ export default function AudioControls() {
           sx={{ width: 150 }}
         />
       </Box>
+      <Button variant="contained" color="primary" onClick={playRandomBGM}>
+        Play BGM
+      </Button>
     </Box>
   );
 }

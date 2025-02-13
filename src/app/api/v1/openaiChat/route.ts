@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { getServerSession } from "next-auth/next";
 import { authOptions, prisma } from "@/app/api/auth/[...nextauth]/authOptions";
+import { maxMessages } from "@/app/api/v1/messages/route";
 
-const openai = new OpenAI({
+export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
@@ -87,14 +88,13 @@ export async function POST(req: NextRequest) {
     }
 
     let reqMessages = [];
-    // if messages > 30, keep only the last 30 messages
-    if (messages.length > 30) {
-      reqMessages = messages.slice(messages.length - 30);
+    if (messages.length > maxMessages) {
+      reqMessages = messages.slice(messages.length - maxMessages); // keep only the last 30 messages
     }
 
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-4o-mini",
       messages: [
         { role: "developer", content: developerMessage },
         ...reqMessages,

@@ -3,7 +3,7 @@
 
 export let bgmVolume = 0.27;
 export let sfxVolume = 0.27;
-export let globalStopBGM = true;
+export let globalStopBGMNarrate = true;
 export let globalAudioEnabled = true;
 
 let igniteSound: HTMLAudioElement | null = null;
@@ -40,11 +40,22 @@ export function setGlobalAudioEnabled(enabled: boolean) {
   }
 }
 
-export function setGlobalStopBGM(stop: boolean) {
-  globalStopBGM = stop;
-  if (globalStopBGM) {
+export function setGlobalStopBGMNarrate(stop: boolean) {
+  globalStopBGMNarrate = stop;
+}
+
+export function setBgmVolume(volume: number) {
+  bgmVolume = volume;
+  if (volume <= 0) {
     stopBGM();
   }
+  if (currentBGM) {
+    currentBGM.volume = volume;
+  }
+}
+
+export function setSfxVolume(volume: number) {
+  sfxVolume = volume;
 }
 
 export function playAudio(
@@ -56,9 +67,18 @@ export function playAudio(
     audio.play().catch((error) => {
       console.error("Error playing audio:", error);
     });
+  }
+}
+
+export function playAudioOnce(
+  audio: HTMLAudioElement | null,
+  volume: number = 1.0
+) {
+  if (audio && globalAudioEnabled && volume > 0) {
     audio.onended = () => {
-      audio?.remove();
+      stopAudio(audio);
     };
+    playAudio(audio, volume);
   }
 }
 
@@ -66,6 +86,18 @@ export function stopAudio(audio: HTMLAudioElement | null) {
   if (audio) {
     audio.pause();
     audio.currentTime = 0;
+    audio.remove();
+    audio = null;
+  }
+}
+
+export function toggleAudio(audio: HTMLAudioElement | null) {
+  if (audio) {
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
   }
 }
 
@@ -84,25 +116,57 @@ export function fadeOutAudio(audio: HTMLAudioElement | null) {
   }
 }
 
-export function setBgmVolume(volume: number) {
-  bgmVolume = volume;
-  if (volume <= 0) {
-    stopBGM();
-  }
-  if (currentBGM) {
-    currentBGM.volume = volume;
+export function fadePauseAudio(audio: HTMLAudioElement | null) {
+  if (audio) {
+    let volume = audio.volume;
+    const fadeOut = setInterval(() => {
+      volume -= 0.1;
+      if (volume <= 0) {
+        clearInterval(fadeOut);
+        audio.pause();
+      } else {
+        audio.volume = volume;
+      }
+    }, 200);
   }
 }
 
-export function setSfxVolume(volume: number) {
-  sfxVolume = volume;
+export function fadeInAudio(
+  audio: HTMLAudioElement | null,
+  volume: number = 1.0
+) {
+  if (audio && globalAudioEnabled && volume > 0) {
+    audio.volume = 0;
+    audio.play().catch((error) => {
+      console.error("Error playing audio:", error);
+    });
+    const fadeIn = setInterval(() => {
+      audio.volume += 0.027;
+      if (audio.volume >= volume) {
+        clearInterval(fadeIn);
+      }
+    }, 200);
+  }
 }
 
-export function randomBGM() {
-  const bgmf = bgmFiles[Math.floor(Math.random() * bgmFiles.length)];
-  const bgm = new Audio(bgmf);
-  bgm.volume = bgmVolume;
-  return bgm;
+export function narrateAudio(audio: HTMLAudioElement | null) {
+  if (!audio || !globalAudioEnabled) return;
+  if (audio.paused) {
+    if (globalStopBGMNarrate) {
+      fadePauseAudio(currentBGM);
+    }
+    audio.onended = () => {
+      if (globalStopBGMNarrate) {
+        fadeInAudio(currentBGM, bgmVolume);
+      }
+    };
+    playAudio(audio);
+  } else {
+    audio.pause();
+    if (globalStopBGMNarrate) {
+      fadeInAudio(currentBGM, bgmVolume);
+    }
+  }
 }
 
 export function playRandomBGM() {
@@ -118,25 +182,17 @@ export function playRandomBGM() {
   }
 }
 
+export function randomBGM() {
+  const bgmf = bgmFiles[Math.floor(Math.random() * bgmFiles.length)];
+  const bgm = new Audio(bgmf);
+  bgm.volume = bgmVolume;
+  return bgm;
+}
+
 export function stopBGM() {
-  if (currentBGM) {
-    currentBGM.pause();
-    currentBGM.currentTime = 0;
-    currentBGM = null;
-  }
+  stopAudio(currentBGM);
 }
 
 export function fadeOutBGM() {
-  if (currentBGM && globalStopBGM) {
-    let volume = bgmVolume;
-    const fadeOut = setInterval(() => {
-      volume -= 0.1;
-      if (volume <= 0) {
-        clearInterval(fadeOut);
-        stopBGM();
-      } else {
-        currentBGM!.volume = volume;
-      }
-    }, 200);
-  }
+  fadeOutAudio(currentBGM);
 }

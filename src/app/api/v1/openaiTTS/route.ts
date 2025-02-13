@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { openai } from "@/app/api/v1/openaiChat/route";
 
 export async function POST(req: Request) {
   try {
@@ -15,28 +16,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-    const response = await fetch("https://api.openai.com/v1/audio/speech", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "tts-1",
-        input: prompt,
-        voice: "onyx", // alloy, ash, coral, echo, fable, onyx, nova, sage, shimmer
-      }),
+    const response = await openai.audio.speech.create({
+      model: "tts-1",
+      input: prompt,
+      voice: "onyx",
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json({ error }, { status: response.status });
+    if (!response || !response.body) {
+      return NextResponse.json(
+        { error: "Failed to generate speech" },
+        { status: 500 }
+      );
     }
 
-    const buffer = await response.arrayBuffer();
-    return new Response(buffer, {
+    return new Response(response.body as ReadableStream, {
       status: 200,
-      headers: { "Content-Type": "audio/mpeg" },
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Content-Disposition": 'attachment; filename="speech.mp3"',
+      },
     });
   } catch (error) {
     console.error("TTS API error:", error);
