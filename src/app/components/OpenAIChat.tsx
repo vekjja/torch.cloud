@@ -56,6 +56,16 @@ export default function OpenAIChat() {
       fetchMessages();
       setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     }
+    const unlockAudio = () => {
+      const audio = new Audio("/sfx/250-milliseconds-of-silence.mp3"); // A tiny silent MP3 file
+      audio
+        .play()
+        .then(() => console.log("🔊 Audio unlocked"))
+        .catch(() => console.log("🔇 Autoplay blocked"));
+    };
+
+    window.addEventListener("click", unlockAudio, { once: true });
+    return () => window.removeEventListener("click", unlockAudio);
   }, [session]);
 
   const fetchActionPoints = async () => {
@@ -119,7 +129,7 @@ export default function OpenAIChat() {
       messages.current.push({ role: "user", content: input });
       messages.current.push({ role: "assistant", content: data.reply });
 
-      await playTTS(data.reply);
+      playTTS(data.reply);
       setResponse(data.reply);
       fadeOutBGM();
 
