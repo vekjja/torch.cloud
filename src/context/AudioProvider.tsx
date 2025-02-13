@@ -36,7 +36,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (currentBGM) {
       currentBGM.volume = bgmVolume;
-      console.log("BGM Volume updated:", bgmVolume); // Debugging
+      console.log("🔊 BGM Volume Updated:", bgmVolume);
     }
   }, [bgmVolume, currentBGM]);
 
@@ -46,8 +46,10 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       const selectedBGM = bgmFiles[randomIndex];
 
       const newBGM = new Audio(selectedBGM);
+
+      // ✅ Ensure volume is applied before playing
       newBGM.volume = bgmVolume;
-      newBGM.play();
+      newBGM.play().catch((err) => console.warn("🔇 Audio play blocked:", err));
 
       if (currentBGM) {
         currentBGM.pause();
@@ -58,22 +60,21 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const playAudio = (audio: HTMLAudioElement | null, volume: number = 1.0) => {
-    if (audio) {
-      audio.volume = volume;
-      audio.play();
-      audio.onended = () => {
-        audio?.remove(); // Cleanup
-      };
-    }
-  };
-
   const menuSelect = () => {
-    playAudio(new Audio("/sfx/menu.mp3"), sfxVolume);
+    const sound = new Audio("/sfx/menu.mp3");
+    sound.volume = sfxVolume;
+    sound
+      .play()
+      .catch((err) => console.warn("🔇 Menu sound play blocked:", err));
   };
 
   const lightTorch = () => {
-    playAudio(igniteSound, sfxVolume);
+    if (igniteSound) {
+      igniteSound.volume = sfxVolume;
+      igniteSound
+        .play()
+        .catch((err) => console.warn("🔇 Torch sound play blocked:", err));
+    }
   };
 
   return (
