@@ -134,7 +134,6 @@ export default function OpenAIChat() {
       setResponse("Error processing request");
     }
 
-    playAudio(audioRef.current);
     setLoading(false);
   };
 
@@ -161,6 +160,7 @@ export default function OpenAIChat() {
       const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
       audioRef.current = new Audio(audioUrl);
+      playAudio(audioRef.current);
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
