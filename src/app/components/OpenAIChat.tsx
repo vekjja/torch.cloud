@@ -7,7 +7,7 @@ import {
   playMenuSFX,
   playRandomBGM,
   fadeOutBGM,
-  playAudio,
+  // playAudio,
   stopAudio,
 } from "@/utils/audio";
 
@@ -162,11 +162,18 @@ export default function OpenAIChat() {
         audioChunks.push(value);
       }
 
-      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
+      const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
       const audioUrl = URL.createObjectURL(audioBlob);
-      audioRef.current = new Audio(audioUrl);
-      audioRef.current.volume = 1.0;
-      playAudio(audioRef.current);
+
+      const audio = new Audio(audioUrl);
+
+      // 🔹 Force audio playback in a user-initiated event
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) =>
+          console.warn("Playback prevented:", error)
+        );
+      }
     } catch (error) {
       console.error("Error playing TTS:", error);
     }
