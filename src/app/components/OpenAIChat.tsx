@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
 import Torch from "../three/Torch";
@@ -7,9 +8,10 @@ import {
   playMenuSFX,
   playRandomBGM,
   fadeOutBGM,
-  // playAudio,
+  playAudio,
   stopAudio,
 } from "@/utils/audio";
+import { get } from "http";
 
 interface Message {
   role: string;
@@ -89,10 +91,10 @@ export default function OpenAIChat() {
       const data: Message[] = await res.json();
       messages.current = data;
 
-      const lastAssistantMessage = data
-        .reverse()
-        .find((msg) => msg.role === "assistant");
-      if (lastAssistantMessage) setResponse(lastAssistantMessage.content);
+      // const lastAssistantMessage = data
+      //   .reverse()
+      //   .find((msg) => msg.role === "assistant");
+      // if (lastAssistantMessage) setResponse(lastAssistantMessage.content);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -106,12 +108,12 @@ export default function OpenAIChat() {
       return;
     }
 
-    stopAudio(audioRef.current);
     setInput("");
-    setResponse("🛡️ Action Point Used 🗡️  " + input);
-    setLoading(true);
-    setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
     playRandomBGM();
+    setLoading(true);
+    stopAudio(audioRef.current);
+    setResponse("🛡️ Action Point Used 🗡️  " + input);
+    setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
 
     try {
       const res = await fetch("/api/v1/openaiChat", {
@@ -129,7 +131,7 @@ export default function OpenAIChat() {
       messages.current.push({ role: "user", content: input });
       messages.current.push({ role: "assistant", content: data.reply });
 
-      playTTS(data.reply);
+      await playTTS(data.reply);
       setResponse(data.reply);
       fadeOutBGM();
 
@@ -162,17 +164,20 @@ export default function OpenAIChat() {
         audioChunks.push(value);
       }
 
-      const audioBlob = new Blob(audioChunks, { type: "audio/mpeg" });
+      const audioBlob = new Blob(audioChunks, { type: "audio/mp3" });
       const audioUrl = URL.createObjectURL(audioBlob);
-
-      const audio = new Audio(audioUrl);
-
-      // 🔹 Force audio playback in a user-initiated event
-      const playPromise = audio.play();
+      audioRef.current = new Audio(audioUrl);
+      audioRef.current.volume = 1.0;
+      // simulate user click to play audio
+      const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch((error) =>
-          console.warn("Playback prevented:", error)
-        );
+        playPromise
+          .then(() => {
+            console.log("🔊 Audio played successfully");
+          })
+          .catch((error) => {
+            console.error("🔇 Error playing audio:", error);
+          });
       }
     } catch (error) {
       console.error("Error playing TTS:", error);
@@ -213,6 +218,13 @@ export default function OpenAIChat() {
           disabled={loading || actionPoints === 0}
         >
           {loading ? "Loading..." : `Action Points: ${actionPoints ?? "..."}`}
+        </Button>
+        <Button
+          color="secondary"
+          onClick={() => playAudio(audioRef.current)}
+          sx={{ display: loading ? "none" : "block" }}
+        >
+          <RecordVoiceOverIcon sx={{ fontSize: 40 }} />
         </Button>
       </Box>
 
