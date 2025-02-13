@@ -73,7 +73,7 @@ export default function OpenAIChat() {
 
   const fetchActionPoints = async () => {
     try {
-      const res = await fetch("/api/action-points");
+      const res = await fetch("/api/v1/action-points");
       if (!res.ok) throw new Error("Failed to fetch action points");
 
       const data = await res.json();
