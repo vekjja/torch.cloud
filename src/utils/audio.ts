@@ -1,10 +1,12 @@
 // src/app/components/AudioControls.tsx
 "use client";
 
-export let igniteSound: HTMLAudioElement | null = null;
-export let currentBGM: HTMLAudioElement | null = null;
-export let bgmVolume = 0.25;
-export let sfxVolume = 0.8;
+export let bgmVolume = 0.27;
+export let sfxVolume = 0.27;
+export let globalAudioEnabled = true;
+
+let igniteSound: HTMLAudioElement | null = null;
+let currentBGM: HTMLAudioElement | null = null;
 
 const bgmFiles = [
   "/sfx/bgm/magic-forest-kevin-macleod.mp3",
@@ -27,11 +29,21 @@ export function lightTorch() {
   playAudio(igniteSound, sfxVolume);
 }
 
+export function setGlobalAudioEnabled(enabled: boolean) {
+  globalAudioEnabled = enabled;
+  if (!globalAudioEnabled) {
+    console.log("🔇 Audio disabled");
+    stopBGM();
+  } else {
+    console.log("🔊 Audio enabled");
+  }
+}
+
 export function playAudio(
   audio: HTMLAudioElement | null,
   volume: number = 1.0
 ) {
-  if (audio) {
+  if (audio && globalAudioEnabled && volume > 0) {
     audio.volume = volume;
     audio.play();
     audio.onended = () => {
@@ -64,6 +76,9 @@ export function fadeOutAudio(audio: HTMLAudioElement | null) {
 
 export function setBgmVolume(volume: number) {
   bgmVolume = volume;
+  if (volume <= 0) {
+    stopBGM();
+  }
   if (currentBGM) {
     currentBGM.volume = volume;
   }
@@ -81,7 +96,8 @@ export function randomBGM() {
 }
 
 export function playRandomBGM() {
-  if (!currentBGM || currentBGM.paused) {
+  if (!globalAudioEnabled) return;
+  if (!currentBGM || (currentBGM.paused && bgmVolume > 0)) {
     const bgm = randomBGM();
     currentBGM = bgm;
     currentBGM.volume = bgmVolume;

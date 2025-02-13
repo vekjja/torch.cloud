@@ -13,35 +13,49 @@ import {
   sfxVolume,
   setBgmVolume,
   setSfxVolume,
+  globalAudioEnabled,
+  setGlobalAudioEnabled,
 } from "@/utils/audio";
 
 export default function AudioControls() {
-  const [narrationEnabled, setNarrationEnabled] = useState(true); // Default enabled
-  const handleNarrationToggle = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setNarrationEnabled(event.target.checked);
+  const [audioEnabled, setAudioEnabled] = useState(globalAudioEnabled); // Default enabled
+  const [bgm, setBgm] = useState(bgmVolume); // Store BGM volume in state
+  const [sfx, setSfx] = useState(sfxVolume); // Store SFX volume in state
+
+  const handleAudioToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAudioEnabled(event.target.checked);
+    setGlobalAudioEnabled(event.target.checked);
+  };
+
+  const handleBgmChange = (_: Event, value: number | number[]) => {
+    const newValue = value as number;
+    setBgm(newValue);
+    setBgmVolume(newValue);
+  };
+
+  const handleSfxChange = (_: Event, value: number | number[]) => {
+    const newValue = value as number;
+    setSfx(newValue);
+    setSfxVolume(newValue);
   };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", padding: 2, gap: 2 }}>
       <FormControlLabel
         control={
-          <Checkbox
-            checked={narrationEnabled}
-            onChange={handleNarrationToggle}
-          />
+          <Checkbox checked={audioEnabled} onChange={handleAudioToggle} />
         }
-        label="Narration"
+        label="Audio"
       />
+
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Typography>BGM Volume</Typography>
         <Slider
-          value={bgmVolume}
+          value={bgm}
           min={0}
           max={1}
           step={0.0009}
-          onChange={(_, value) => setBgmVolume(value as number)}
+          onChange={handleBgmChange}
           sx={{ width: 150 }}
         />
       </Box>
@@ -49,11 +63,11 @@ export default function AudioControls() {
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Typography>SFX Volume</Typography>
         <Slider
-          value={sfxVolume}
+          value={sfx}
           min={0}
           max={1}
           step={0.05}
-          onChange={(_, value) => setSfxVolume(value as number)}
+          onChange={handleSfxChange}
           sx={{ width: 150 }}
         />
       </Box>
