@@ -15,15 +15,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { prompt } = await req.json();
+    const { prompt, voice } = await req.json();
     if (!prompt) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
+    const requestVoice = voice || "onyx";
+
+    console.log("Generating speech with voice:", requestVoice);
+
     const response = await openai.audio.speech.create({
       model: "tts-1",
       input: prompt,
-      voice: "onyx",
+      voice: requestVoice,
     });
 
     if (!response || !response.body) {
