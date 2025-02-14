@@ -53,7 +53,7 @@ export default function SignInButton() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Torch Cloud
           </Typography>
         </DialogTitle>
         <DialogContent>

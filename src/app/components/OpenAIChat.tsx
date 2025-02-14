@@ -77,7 +77,14 @@ export default function OpenAIChat() {
       if (!res.ok) throw new Error("Failed to fetch messages");
       const data: Message[] = await res.json();
       messages.current = data;
-      console.log("Fetched messages:", messages.current);
+      // set the response to the last assistant message
+      const lastAssistantMessage = data
+        .slice()
+        .reverse()
+        .find((msg) => msg.role === "assistant");
+      if (lastAssistantMessage) {
+        setResponse(lastAssistantMessage.content);
+      }
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -194,12 +201,19 @@ export default function OpenAIChat() {
           disabled={loading || actionPoints === 0}
           sx={{ display: input.trim() ? "block" : "none" }}
         >
-          {loading ? "Loading..." : `Action Points: ${actionPoints ?? "..."}`}
+          {loading
+            ? "Loading..."
+            : `Use Action Point: ${actionPoints ?? "..."}`}
         </Button>
         <Button
           color="secondary"
           onClick={handleNarrateClick}
-          sx={{ display: loading || response === "" ? "none" : "block" }}
+          sx={{
+            display:
+              loading || response === "" || !audioRef.current
+                ? "none"
+                : "block",
+          }}
         >
           <RecordVoiceOverIcon sx={{ fontSize: 40 }} />
         </Button>
