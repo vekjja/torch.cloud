@@ -83,7 +83,6 @@ export default function OpenAIChat() {
       if (response === "") {
         const lastAssistantMessage = data
           .slice()
-          .reverse()
           .find((msg) => msg.role === "assistant");
         if (lastAssistantMessage) {
           setResponse(lastAssistantMessage.content);
