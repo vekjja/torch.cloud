@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions, prisma } from "@/app/api/auth/[...nextauth]/authOptions";
 
 export async function GET() {
-  const maxMessages = 30;
+  const maxMessages = 63;
   try {
     const session = await getServerSession(authOptions);
 

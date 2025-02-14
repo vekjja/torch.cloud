@@ -77,6 +77,7 @@ export default function OpenAIChat() {
       if (!res.ok) throw new Error("Failed to fetch messages");
       const data: Message[] = await res.json();
       messages.current = data;
+      console.log("Fetched messages:", messages.current);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }

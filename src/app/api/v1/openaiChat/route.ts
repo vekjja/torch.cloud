@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-import { getServerSession } from "next-auth/next";
 import { authOptions, prisma } from "@/app/api/auth/[...nextauth]/authOptions";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import OpenAI from "openai";
 
-export const openai = new OpenAI({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
     }
 
     let reqMessages = [];
-    const maxMessages = 30;
+    const maxMessages = 63;
     if (messages.length > maxMessages) {
       reqMessages = messages.slice(messages.length - maxMessages); // keep only the last 30 messages
     }

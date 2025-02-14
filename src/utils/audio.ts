@@ -175,10 +175,7 @@ export function playRandomBGM() {
     const bgm = randomBGM();
     currentBGM = bgm;
     currentBGM.volume = bgmVolume;
-    currentBGM.play();
-    currentBGM.onended = () => {
-      currentBGM?.remove();
-    };
+    playAudioOnce(bgm, bgmVolume);
   } else if (currentBGM && bgmVolume > 0) {
     currentBGM.play();
   }
