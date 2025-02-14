@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-    const requestVoice = voice || "onyx";
+    const requestVoice = voice || "sage";
 
     console.log("Generating speech with voice:", requestVoice);
 
