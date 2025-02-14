@@ -170,7 +170,7 @@ export function narrateAudio(audio: HTMLAudioElement | null) {
   if (!audio || !globalAudioEnabled) return;
   if (audio.paused) {
     if (globalStopBGMNarrate) {
-      fadePauseAudio(currentBGM);
+      currentBGM?.pause();
     }
     audio.onended = () => {
       if (globalStopBGMNarrate) {
