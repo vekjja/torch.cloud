@@ -98,7 +98,7 @@ export default function OpenAIChat() {
 
   useEffect(() => {
     setVoice(globalVoice);
-  }, [globalVoice]);
+  }, []);
 
   const handleSubmit = async () => {
     playMenuSFX();
