@@ -153,7 +153,7 @@ export default function OpenAIChat() {
       const ttsRes = await fetch("/api/v1/openaiTTS", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text, voice: voice }),
+        body: JSON.stringify({ prompt: text, voice: globalVoice }),
       });
 
       if (!ttsRes.ok) throw new Error("Failed to fetch TTS audio");
