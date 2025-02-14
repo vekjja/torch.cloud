@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { useSession } from "next-auth/react";
@@ -50,15 +50,7 @@ export default function OpenAIChat() {
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    if (session) {
-      setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
-      fetchActionPoints();
-      fetchMessages();
-    }
-  }, [session]);
-
-  const fetchActionPoints = async () => {
+  const fetchActionPoints = useCallback(async () => {
     console.log("fetching action points");
     try {
       const res = await fetch("/api/v1/action-points");
@@ -70,20 +62,21 @@ export default function OpenAIChat() {
       console.error("Error fetching action points:", error);
       setActionPoints(0);
     }
-  };
+  }, []);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     console.log("fetching messages");
     try {
       const res = await fetch("/api/v1/messages");
       if (!res.ok) throw new Error("Failed to fetch messages");
+
       const data: Message[] = await res.json();
       messages.current = data;
-      // set the response to the last assistant message
+
       if (response === "") {
-        const lastAssistantMessage = data
-          .slice()
-          .find((msg) => msg.role === "assistant");
+        const lastAssistantMessage = data.find(
+          (msg) => msg.role === "assistant"
+        );
         if (lastAssistantMessage) {
           setResponse(lastAssistantMessage.content);
         }
@@ -91,7 +84,15 @@ export default function OpenAIChat() {
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
-  };
+  }, [response]); // Add response to dependency to keep track of state changes
+
+  useEffect(() => {
+    if (session) {
+      setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
+      fetchActionPoints();
+      fetchMessages();
+    }
+  }, [session, fetchActionPoints, fetchMessages]); // Include fetchMessages & fetchActionPoints in dependencies
 
   const handleSubmit = async () => {
     playMenuSFX();
