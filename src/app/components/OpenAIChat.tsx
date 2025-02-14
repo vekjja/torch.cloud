@@ -101,6 +101,23 @@ export default function OpenAIChat() {
     setVoice(globalVoice);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const viewportHeight = window.innerHeight;
+      document.documentElement.style.setProperty(
+        "--vh",
+        `${viewportHeight * 0.01}px`
+      );
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const handleSubmit = async () => {
     playMenuSFX();
     if (!input.trim()) return;
@@ -181,7 +198,13 @@ export default function OpenAIChat() {
   };
 
   return (
-    <Box sx={{ textAlign: "center", padding: 2 }}>
+    <Box
+      sx={{
+        textAlign: "center",
+        padding: 2,
+        height: "calc(var(--vh, 1vh) * 100)",
+      }}
+    >
       <Torch />
 
       {/* Input & Submit Button Container */}
