@@ -117,7 +117,7 @@ export default function OpenAIChat() {
     playRandomBGM();
     setLoading(true);
     stopAudio(audioRef.current);
-    setResponse("\t🗡️🛡️ Action Point Used🛡️🗡️\n" + input);
+    setResponse("\t🗡️🛡️Action Taken🛡️🗡️\n" + input);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
 
     console.log("Submitting:", input, "Messages:", messages.current);
