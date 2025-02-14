@@ -171,7 +171,7 @@ export function narrateAudio(audio: HTMLAudioElement | null) {
 
 export function playRandomBGM() {
   if (!globalAudioEnabled) return;
-  if (!currentBGM || (currentBGM.paused && bgmVolume > 0)) {
+  if (!currentBGM && bgmVolume > 0) {
     const bgm = randomBGM();
     currentBGM = bgm;
     currentBGM.volume = bgmVolume;
@@ -179,6 +179,8 @@ export function playRandomBGM() {
     currentBGM.onended = () => {
       currentBGM?.remove();
     };
+  } else if (currentBGM && bgmVolume > 0) {
+    currentBGM.play();
   }
 }
 
@@ -195,4 +197,8 @@ export function stopBGM() {
 
 export function fadeOutBGM() {
   fadeOutAudio(currentBGM);
+}
+
+export function pauseBGM() {
+  fadePauseAudio(currentBGM);
 }

@@ -19,6 +19,7 @@ import {
   globalStopBGMNarrate,
   setGlobalStopBGMNarrate,
   playRandomBGM,
+  pauseBGM,
 } from "@/utils/audio";
 
 export default function AudioControls() {
@@ -88,6 +89,10 @@ export default function AudioControls() {
       </Box>
       <Button variant="contained" color="primary" onClick={playRandomBGM}>
         Play BGM
+      </Button>
+
+      <Button variant="contained" color="primary" onClick={pauseBGM}>
+        Pause BGM
       </Button>
     </Box>
   );
