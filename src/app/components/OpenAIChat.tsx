@@ -83,6 +83,7 @@ export default function OpenAIChat() {
           setResponse(lastAssistantMessage.content);
         }
       }
+      console.log("Messages Fetched:", messages.current);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
@@ -119,6 +120,7 @@ export default function OpenAIChat() {
     setResponse("\t🗡️🛡️ Action Point Used🛡️🗡️\n" + input);
     setSubmitLabel(labelNames[Math.floor(Math.random() * labelNames.length)]);
 
+    console.log("Submitting:", input, "Messages:", messages.current);
     try {
       const res = await fetch("/api/v1/openaiChat", {
         method: "POST",

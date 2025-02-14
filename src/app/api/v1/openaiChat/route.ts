@@ -86,11 +86,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let reqMessages = [];
-    const maxMessages = 63;
-    if (messages.length > maxMessages) {
-      reqMessages = messages.slice(messages.length - maxMessages); // keep only the last 30 messages
-    }
+    const reqMessages = messages.slice(messages.length - 63); // keep only the last 63 messages
 
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
