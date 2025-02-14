@@ -88,10 +88,13 @@ export async function POST(req: NextRequest) {
 
     const reqMessages = messages.slice(messages.length - 63); // keep only the last 63 messages
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const maxCompletionTokens =
+      Number(process.env.OPENAI_MAX_COMPLETION_TOKENS) || 99;
 
     console.log("Prompt:", prompt, "Model:", model);
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
+      max_completion_tokens: maxCompletionTokens,
       model: model,
       user: "torch-cloud-" + user.id,
       messages: [

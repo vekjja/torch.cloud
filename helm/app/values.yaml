@@ -91,6 +91,8 @@ env:
       key: api-key
 - name: OPENAI_MODEL
   value: "gpt-4o"
+- name: OPENAI_MAX_COMPLETION_TOKENS
+  value: "99"
 
 ingress:
   enabled: true
