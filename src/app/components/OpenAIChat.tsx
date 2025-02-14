@@ -87,7 +87,11 @@ export default function OpenAIChat() {
     playMenuSFX();
     if (!input.trim()) return;
     if (actionPoints === null || actionPoints <= 0) {
-      setResponse("⚠️ Not enough Action Points to perform this action.");
+      setResponse(`⚠️ Not enough Action Points to perform this action.
+        \n⚔️ If you made it this far, You are a true Adventurer
+        \n💲 The Option to Purchase More Action Points is Currently Unavailable.
+        \n🖤 Please Consider Donating and Come Back Soon!.
+        `);
       return;
     }
 
