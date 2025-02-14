@@ -9,6 +9,7 @@ import {
   playRandomBGM,
   stopAudio,
   narrateAudio,
+  globalVoice,
 } from "@/utils/audio";
 
 interface Message {
@@ -47,6 +48,7 @@ export default function OpenAIChat() {
   const [loading, setLoading] = useState(false);
   const [actionPoints, setActionPoints] = useState<number | null>(null);
   const [submitLabel, setSubmitLabel] = useState<string>("");
+  const [voice, setVoice] = useState<string>(globalVoice);
   const messages = useRef<Message[]>([]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -93,6 +95,10 @@ export default function OpenAIChat() {
       fetchMessages();
     }
   }, [session, fetchActionPoints, fetchMessages]); // Include fetchMessages & fetchActionPoints in dependencies
+
+  useEffect(() => {
+    setVoice(globalVoice);
+  }, []);
 
   const handleSubmit = async () => {
     playMenuSFX();
@@ -143,10 +149,11 @@ export default function OpenAIChat() {
 
   const playTTS = async (text: string) => {
     try {
+      console.log("Playing TTS audio", "Voice:", voice);
       const ttsRes = await fetch("/api/v1/openaiTTS", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: text }),
+        body: JSON.stringify({ prompt: text, voice: globalVoice }),
       });
 
       if (!ttsRes.ok) throw new Error("Failed to fetch TTS audio");

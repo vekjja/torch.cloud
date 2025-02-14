@@ -8,12 +8,18 @@ import {
   FormControlLabel,
   Checkbox,
   Button,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import {
   bgmVolume,
   sfxVolume,
   setBgmVolume,
   setSfxVolume,
+  globalVoice,
+  availableVoices,
+  setGlobalVoice,
   globalAudioEnabled,
   setGlobalAudioEnabled,
   globalStopBGMNarrate,
@@ -23,6 +29,7 @@ import {
 } from "@/utils/audio";
 
 export default function AudioControls() {
+  const [voice, setVoice] = useState(globalVoice); // Store voice in state
   const [audioEnabled, setAudioEnabled] = useState(globalAudioEnabled); // Default enabled
   const [stopBGM, setStopBGM] = useState(globalStopBGMNarrate); // Store stopBGM state
   const [bgm, setBgm] = useState(bgmVolume); // Store BGM volume in state
@@ -48,6 +55,12 @@ export default function AudioControls() {
   const handleStopBGMChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStopBGM(event.target.checked);
     setGlobalStopBGMNarrate(event.target.checked);
+  };
+
+  const handleVoiceChange = (event: SelectChangeEvent<string>) => {
+    const selectedVoice = event.target.value as string;
+    setVoice(selectedVoice); // Updates local state
+    setGlobalVoice(selectedVoice); // Updates global voice
   };
 
   return (
@@ -87,6 +100,18 @@ export default function AudioControls() {
           sx={{ width: 150 }}
         />
       </Box>
+
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Typography>Voice</Typography>
+        <Select value={voice} onChange={handleVoiceChange} sx={{ width: 150 }}>
+          {availableVoices.map((voiceOption) => (
+            <MenuItem key={voiceOption} value={voiceOption}>
+              {voiceOption}
+            </MenuItem>
+          ))}
+        </Select>
+      </Box>
+
       <Button variant="contained" color="primary" onClick={playRandomBGM}>
         Play BGM
       </Button>

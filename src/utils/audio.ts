@@ -3,8 +3,21 @@
 
 export let bgmVolume = 0.27;
 export let sfxVolume = 0.27;
+export let globalVoice = "onyx";
 export let globalStopBGMNarrate = true;
 export let globalAudioEnabled = true;
+
+export const availableVoices = [
+  "alloy",
+  "ash",
+  "coral",
+  "echo",
+  "fable",
+  "onyx",
+  "nova",
+  "sage",
+  "shimmer",
+];
 
 let igniteSound: HTMLAudioElement | null = null;
 let currentBGM: HTMLAudioElement | null = null;
@@ -22,11 +35,15 @@ if (typeof window !== "undefined") {
   igniteSound = new Audio("/sfx/torch-lighting.mp3");
 }
 
+export function setGlobalVoice(voice: string) {
+  globalVoice = voice;
+}
+
 export function playMenuSFX() {
   playAudio(new Audio("/sfx/menu.mp3"), sfxVolume);
 }
 
-export function lightTorch() {
+export function igniteTorch() {
   playAudio(igniteSound, sfxVolume);
 }
 
