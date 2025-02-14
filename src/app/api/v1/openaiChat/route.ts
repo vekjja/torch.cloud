@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
       model: "gpt-4o-mini",
+      user: "torch-cloud-" + user.id,
       messages: [
         { role: "developer", content: developerMessage },
         ...reqMessages,
