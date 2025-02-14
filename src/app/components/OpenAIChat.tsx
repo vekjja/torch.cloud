@@ -156,7 +156,7 @@ export default function OpenAIChat() {
   };
 
   return (
-    <Box sx={{ textAlign: "center", padding: 2 }} onClick={playRandomBGM}>
+    <Box sx={{ textAlign: "center", padding: 2 }}>
       <Torch />
 
       {/* Input & Submit Button Container */}
