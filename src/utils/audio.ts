@@ -43,7 +43,7 @@ export function playMenuSFX() {
   playAudio(new Audio("/sfx/menu.mp3"), sfxVolume);
 }
 
-export function lightTorch() {
+export function igniteTorch() {
   playAudio(igniteSound, sfxVolume);
 }
 

@@ -7,13 +7,14 @@ import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { playMenuSFX, playRandomBGM } from "@/utils/audio";
+import { playMenuSFX, playRandomBGM, igniteTorch } from "@/utils/audio";
 
 export default function SignInButton() {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     playMenuSFX();
+    igniteTorch();
     playRandomBGM();
     setOpen(true);
   };
