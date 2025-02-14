@@ -59,8 +59,8 @@ export default function AudioControls() {
 
   const handleVoiceChange = (event: SelectChangeEvent<string>) => {
     const selectedVoice = event.target.value as string;
-    setVoice(selectedVoice);
-    setGlobalVoice(selectedVoice);
+    setVoice(selectedVoice); // Updates local state
+    setGlobalVoice(selectedVoice); // Updates global voice
   };
 
   return (
