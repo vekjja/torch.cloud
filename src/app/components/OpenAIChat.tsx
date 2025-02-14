@@ -59,6 +59,7 @@ export default function OpenAIChat() {
   }, [session]);
 
   const fetchActionPoints = async () => {
+    console.log("fetching action points");
     try {
       const res = await fetch("/api/v1/action-points");
       if (!res.ok) throw new Error("Failed to fetch action points");
@@ -72,18 +73,21 @@ export default function OpenAIChat() {
   };
 
   const fetchMessages = async () => {
+    console.log("fetching messages");
     try {
       const res = await fetch("/api/v1/messages");
       if (!res.ok) throw new Error("Failed to fetch messages");
       const data: Message[] = await res.json();
       messages.current = data;
       // set the response to the last assistant message
-      const lastAssistantMessage = data
-        .slice()
-        .reverse()
-        .find((msg) => msg.role === "assistant");
-      if (lastAssistantMessage) {
-        setResponse(lastAssistantMessage.content);
+      if (response === "") {
+        const lastAssistantMessage = data
+          .slice()
+          .reverse()
+          .find((msg) => msg.role === "assistant");
+        if (lastAssistantMessage) {
+          setResponse(lastAssistantMessage.content);
+        }
       }
     } catch (error) {
       console.error("Error fetching messages:", error);
