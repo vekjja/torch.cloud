@@ -50,7 +50,7 @@ export default function Torch() {
     const loader = new GLTFLoader();
     loader.load("/gltf/torch/scene.gltf", (gltf) => {
       const model = gltf.scene;
-      model.position.set(0, -6, -3);
+      model.position.set(0, -7.2, -3);
       scene.add(model);
 
       // Lighting

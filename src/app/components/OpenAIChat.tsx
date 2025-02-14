@@ -181,16 +181,14 @@ export default function OpenAIChat() {
   };
 
   return (
-    <Box sx={{ textAlign: "center", padding: 2 }}>
+    <Box sx={{ textAlign: "center", padding: 1 }}>
       <Torch />
-
       {/* Input & Submit Button Container */}
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 2,
           marginBottom: 2,
         }}
       >
