@@ -137,7 +137,7 @@ export function fadePauseAudio(audio: HTMLAudioElement | null) {
   if (audio) {
     let volume = audio.volume;
     const fadeOut = setInterval(() => {
-      volume -= 0.1;
+      volume -= 0.27;
       if (volume <= 0) {
         clearInterval(fadeOut);
         audio.pause();
@@ -170,7 +170,7 @@ export function narrateAudio(audio: HTMLAudioElement | null) {
   if (!audio || !globalAudioEnabled) return;
   if (audio.paused) {
     if (globalStopBGMNarrate) {
-      currentBGM?.pause();
+      fadePauseAudio(currentBGM);
     }
     audio.onended = () => {
       if (globalStopBGMNarrate) {

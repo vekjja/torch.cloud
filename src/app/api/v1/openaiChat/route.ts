@@ -87,10 +87,12 @@ export async function POST(req: NextRequest) {
     }
 
     const reqMessages = messages.slice(messages.length - 63); // keep only the last 63 messages
+    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
+    console.log("Prompt:", prompt, "Model:", model);
     // Generate response from OpenAI
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: model,
       user: "torch-cloud-" + user.id,
       messages: [
         { role: "developer", content: developerMessage },
@@ -98,8 +100,6 @@ export async function POST(req: NextRequest) {
         { role: "user", content: prompt },
       ],
     });
-
-    const reply = response.choices[0].message.content;
 
     // Decrement action points
     await prisma.user.update({
@@ -116,6 +116,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const reply = response.choices[0].message.content;
     // Save assistant's response
     await prisma.message.create({
       data: {

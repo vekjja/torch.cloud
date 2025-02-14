@@ -89,6 +89,8 @@ env:
     secretKeyRef:
       name: openai-api-key
       key: api-key
+- name: OPENAI_MODEL
+  value: "gpt-4o"
 
 ingress:
   enabled: true
