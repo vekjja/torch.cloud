@@ -183,13 +183,7 @@ export default function OpenAIChat() {
             margin: "0 auto",
           }}
         >
-          <ReactMarkdown
-            sx={{
-              userSelect: "text", // Allow text selection for copying
-            }}
-          >
-            {response}
-          </ReactMarkdown>
+          <ReactMarkdown>{response}</ReactMarkdown>
         </Box>
       )}
       <Button
