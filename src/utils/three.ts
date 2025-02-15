@@ -38,10 +38,4 @@ export function initThreeScene({
     renderer.setSize(width || mount.clientWidth, height || mount.clientHeight);
     mount.appendChild(renderer.domElement);
   }
-
-  // Ensure there is ambient lighting
-  if (!scene.children.some((child) => child instanceof THREE.AmbientLight)) {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-  }
 }

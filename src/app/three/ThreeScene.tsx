@@ -13,7 +13,8 @@ interface ThreeSceneProps {
   renderScene?: (
     scene: THREE.Scene,
     camera: THREE.Camera,
-    renderer: THREE.WebGLRenderer
+    renderer: THREE.WebGLRenderer,
+    requestRef: { current: number | null }
   ) => void;
 }
 
@@ -33,9 +34,8 @@ const ThreeScene = ({
     // Initialize Three.js scene
     initThreeScene({ mount, alpha });
 
-    // Ensure renderScene runs only if scene, camera, and renderer exist
     if (scene && camera && renderer && renderScene) {
-      renderScene(scene, camera, renderer);
+      renderScene(scene, camera, renderer, requestRef);
     }
 
     // Animation Loop
