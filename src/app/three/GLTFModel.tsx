@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import ThreeScene from "./Scene";
+import ThreeScene from "./ThreeScene";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { Box } from "@mui/material";
