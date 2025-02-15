@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import { Box, TextField, Button } from "@mui/material";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
@@ -18,27 +18,12 @@ interface Message {
 }
 
 const labelNames = [
-  "Create Your Own Adventure",
-  "Create your destiny",
-  "Create your own story",
-  "Create your own path",
-  "What will you do next?",
-  "What will you do now?",
-  "What will you do?",
-  "What will you choose?",
-  "What will you decide?",
-  "What world will you create?",
-  "How will you tell your story?",
-  "How will you create your world?",
-  "How will you create your adventure?",
-  "How will you create your destiny?",
-  "Create the world you want to see",
-  "Create the world you want to live in",
-  "Create the world you want to explore",
-  "Be the change you want to see",
-  "Be the hero of your own story",
-  "Be the hero of your own adventure",
-  "Be the hero of your own destiny",
+  "Interact",
+  "Enter Action",
+  "e.g. Ask for Help",
+  "e.g. Recap, Status",
+  "e.g. Explore, Investigate",
+  "You can be as detailed as you like",
 ];
 
 export default function OpenAIChat() {
@@ -87,7 +72,7 @@ export default function OpenAIChat() {
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
-  }, [response]); // Add response to dependency to keep track of state changes
+  }, [response]);
 
   useEffect(() => {
     if (session) {
@@ -95,7 +80,7 @@ export default function OpenAIChat() {
       fetchActionPoints();
       fetchMessages();
     }
-  }, [session, fetchActionPoints, fetchMessages]); // Include fetchMessages & fetchActionPoints in dependencies
+  }, [session, fetchActionPoints, fetchMessages]);
 
   useEffect(() => {
     setVoice(globalVoice);
@@ -183,13 +168,48 @@ export default function OpenAIChat() {
   return (
     <Box sx={{ textAlign: "center", padding: 1 }}>
       <Torch />
-      {/* Input & Submit Button Container */}
+      {response && (
+        <Box
+          sx={{
+            marginTop: 2,
+            marginBottom: 2,
+            textAlign: "center",
+            padding: 2,
+            width: "72vw",
+            border: "1px solid #B56719B7",
+            borderRadius: "4px",
+            backgroundColor: "#1e1e1e",
+            color: "#fff",
+            margin: "0 auto",
+          }}
+        >
+          <ReactMarkdown
+            sx={{
+              userSelect: "text", // Allow text selection for copying
+            }}
+          >
+            {response}
+          </ReactMarkdown>
+        </Box>
+      )}
+      <Button
+        color="secondary"
+        onClick={handleNarrateClick}
+        sx={{
+          display:
+            loading || response === "" || !audioRef.current ? "none" : "block",
+          margin: "0 auto",
+          marginTop: 2,
+        }}
+      >
+        <RecordVoiceOverIcon sx={{ fontSize: 40 }} />
+      </Button>
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          marginBottom: 2,
+          marginTop: 2,
         }}
       >
         <TextField
@@ -197,7 +217,11 @@ export default function OpenAIChat() {
           variant="outlined"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          sx={{ width: "72vw", marginBottom: 0.1 }}
+          sx={{
+            width: "72vw",
+            marginBottom: 2,
+            display: loading ? "none" : "",
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           disabled={loading}
           multiline // Allow multiline input
@@ -216,38 +240,7 @@ export default function OpenAIChat() {
             ? "Loading..."
             : `Use Action Point: ${actionPoints ?? "..."}`}
         </Button>
-        <Button
-          color="secondary"
-          onClick={handleNarrateClick}
-          sx={{
-            display:
-              loading || response === "" || !audioRef.current
-                ? "none"
-                : "block",
-          }}
-        >
-          <RecordVoiceOverIcon sx={{ fontSize: 40 }} />
-        </Button>
       </Box>
-
-      {response && (
-        <Box
-          sx={{
-            marginTop: 2,
-            textAlign: "center",
-            padding: 2,
-            width: "72vw",
-            border: "1px solid #B56719B7",
-            borderRadius: "4px",
-            backgroundColor: "#1e1e1e",
-            color: "#fff",
-            margin: "0 auto",
-          }}
-        >
-          <Typography variant="h6" sx={{ color: "#fff" }}></Typography>
-          <ReactMarkdown>{response}</ReactMarkdown>
-        </Box>
-      )}
     </Box>
   );
 }

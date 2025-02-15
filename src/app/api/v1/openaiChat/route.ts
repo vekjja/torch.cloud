@@ -51,7 +51,8 @@ const developerMessage = `
       don't ignore the users questions on real life subjects if relevant to the story.
 
       the output supports markdown and html.
-      keep the response word count under 100 words.
+      keep the response word count under 99 words.
+      please don't be terse but concise 
     `;
 
 export async function POST(req: NextRequest) {
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
     const reqMessages = messages.slice(messages.length - 63); // keep only the last 63 messages
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
     const maxCompletionTokens =
-      Number(process.env.OPENAI_MAX_COMPLETION_TOKENS) || 99;
+      Number(process.env.OPENAI_MAX_COMPLETION_TOKENS) || 207;
 
     console.log("Prompt:", prompt, "Model:", model);
     // Generate response from OpenAI

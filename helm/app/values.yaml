@@ -92,7 +92,7 @@ env:
 - name: OPENAI_MODEL
   value: "gpt-4o"
 - name: OPENAI_MAX_COMPLETION_TOKENS
-  value: "99"
+  value: "198"
 
 ingress:
   enabled: true
