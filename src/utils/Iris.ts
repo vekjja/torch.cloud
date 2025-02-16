@@ -29,7 +29,6 @@ export default class Iris {
       0.1,
       1000
     );
-    this.camera.position.z = 3;
     this.renderer = new THREE.WebGLRenderer({
       alpha: props.alpha,
       antialias: props.antialias,
@@ -44,8 +43,8 @@ export default class Iris {
     console.log("iScene Initialized");
   }
 
-  loadScene(scenFunc: (i: Iris) => void) {
-    scenFunc(this);
+  loadScene(sceneFunc: (i: Iris) => void) {
+    sceneFunc(this);
   }
 
   /**

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
-import Iris from "@/utils/iris/Iris";
+import Iris from "@/utils/Iris";
 
 interface iSceneProps {
   alpha?: boolean;

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 
 import * as THREE from "three";
-import iScene from "@/utils/iris/Iris";
+import iScene from "@/utils/Iris";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { igniteTorch } from "@/utils/audio";
 
@@ -38,6 +38,8 @@ export default function Torch({
       const model = gltf.scene;
       model.position.set(0, -7.2, -3);
       iRef.current!.scene.add(model);
+
+      iRef.current!.camera.position.set(0, 0, 3);
 
       const mainLight = new THREE.DirectionalLight(0xffffff, 1);
       mainLight.position.set(0, 10, 10);
