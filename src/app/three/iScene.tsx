@@ -47,11 +47,7 @@ const IScene = ({
     // 3. Handle resizing
     const handleResize = () => {
       if (!iSceneRef.current) return;
-      const newWidth = mount.clientWidth;
-      const newHeight = mount.clientHeight;
-      iSceneRef.current.camera.aspect = newWidth / newHeight;
-      iSceneRef.current.camera.updateProjectionMatrix();
-      iSceneRef.current.renderer.setSize(newWidth, newHeight);
+      iSceneRef.current.resize();
     };
     window.addEventListener("resize", handleResize);
     handleResize(); // Do an initial resize

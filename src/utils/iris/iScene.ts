@@ -18,9 +18,11 @@ export default class iScene {
   clock: THREE.Clock;
   mixer: THREE.AnimationMixer | null = null;
   model?: THREE.Group;
+  mount: HTMLElement;
 
   constructor(props: iSceneProps) {
     // 1. Basic Scene Setup
+    this.mount = props.mount;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       75,
@@ -47,13 +49,17 @@ export default class iScene {
     this.clock = new THREE.Clock();
 
     // 3. Load Torch Model
-    this.loadModel();
+    this.loadGLTF("/gltf/torch/scene.gltf");
   }
 
-  private loadModel() {
+  private loadGLTF(modelPath: string) {
+    if (!modelPath) {
+      console.error("No model path provided");
+      return;
+    }
     const loader = new GLTFLoader();
     loader.load(
-      "/gltf/torch/scene.gltf",
+      modelPath,
       (gltf) => {
         this.model = gltf.scene;
         this.model.position.set(0, -7.2, -3);
@@ -90,12 +96,22 @@ export default class iScene {
    */
   render() {
     const delta = this.clock.getDelta();
-
     // If there's an active mixer, update it
     if (this.mixer) {
       this.mixer.update(delta);
     }
-
     this.renderer.render(this.scene, this.camera);
+  }
+
+  /**
+   * Resize the renderer to the new width and height.
+   * If no width or height is provided, it will default to the mount's clientWidth and clientHeight.
+   */
+  resize(width?: number, height?: number) {
+    const nWidth = width ? width : this.mount.clientWidth;
+    const nHeight = height ? height : this.mount.clientHeight;
+    this.camera.aspect = nWidth / nHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(nWidth, nHeight);
   }
 }
