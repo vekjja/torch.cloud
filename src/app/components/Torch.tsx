@@ -86,6 +86,7 @@ export default function Torch({
       sx={{
         width: width || "100%",
         height: height || "100%",
+        marginBottom: 2,
       }}
     />
   );
