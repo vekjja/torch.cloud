@@ -2,19 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
-import iScene from "@/utils/iris/iScene";
+import Iris from "@/utils/iris/Iris";
 
-import * as THREE from "three";
-
-interface iSceneRefProps {
+interface iSceneProps {
   alpha?: boolean;
   width?: number;
   height?: number;
   antialias?: boolean;
-  loadScene?: (
-    scene: THREE.Scene,
-    addMixer: (m: THREE.AnimationMixer) => void
-  ) => void;
+  loadScene?: (i: Iris) => void;
 }
 
 const IScene = ({
@@ -23,18 +18,17 @@ const IScene = ({
   alpha = false,
   antialias = true,
   loadScene = () => {},
-}: iSceneRefProps) => {
+}: iSceneProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number | null>(null);
-  const iSceneRef = useRef<iScene | null>(null);
+  const iRef = useRef<Iris | null>(null);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
-    // 1. Create iScene instance (if it doesn’t exist yet)
-    if (!iSceneRef.current) {
-      iSceneRef.current = new iScene({
+    if (!iRef.current) {
+      iRef.current = new Iris({
         mount,
         alpha,
         width,
@@ -43,34 +37,27 @@ const IScene = ({
       });
     }
 
-    iSceneRef.current.loadScene(loadScene);
+    iRef.current.loadScene(loadScene);
 
-    // 2. Start the animation loop
     const animate = () => {
-      if (!iSceneRef.current) return;
-      iSceneRef.current.render(); // iScene handles model loading, mixers, etc.
+      if (!iRef.current) return;
+      iRef.current.render(); // iScene handles model loading, mixers, etc.
       requestRef.current = requestAnimationFrame(animate);
     };
     animate();
 
-    // 3. Handle resizing
     const handleResize = () => {
-      if (!iSceneRef.current) return;
-      iSceneRef.current.resize();
+      if (!iRef.current) return;
+      iRef.current.resize();
     };
     window.addEventListener("resize", handleResize);
     handleResize(); // Do an initial resize
 
-    // 4. Cleanup
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
       window.removeEventListener("resize", handleResize);
-      // Optional: remove the WebGL canvas from the DOM
-      // if (iSceneRef.current?.renderer?.domElement) {
-      //   mount.removeChild(iSceneRef.current.renderer.domElement);
-      // }
     };
-  }, [alpha, antialias, height, width]);
+  }, [alpha, antialias, height, width, loadScene]);
 
   return (
     <Box

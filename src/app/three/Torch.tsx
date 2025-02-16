@@ -1,51 +1,90 @@
 "use client";
 
-import React from "react";
-import { igniteTorch } from "@/utils/audio";
-import IScene from "./iScene";
+import { useEffect, useRef } from "react";
+import { Box } from "@mui/material";
 
 import * as THREE from "three";
+import iScene from "@/utils/iris/Iris";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { igniteTorch } from "@/utils/audio";
 
-export default function Torch() {
-  function handleClick() {
-    igniteTorch();
-  }
+interface TorchProps {
+  sceneWidth?: string | number;
+  sceneHeight?: string | number;
+}
 
-  function loadScene(
-    scene: THREE.Scene,
-    addMixer: (m: THREE.AnimationMixer) => void
-  ) {
+export default function Torch({
+  sceneWidth: width,
+  sceneHeight: height,
+}: TorchProps) {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number | null>(null);
+  const iRef = useRef<iScene | null>(null);
+
+  useEffect(() => {
+    const mount = mountRef.current;
+    if (!mount) return;
+
+    if (!iRef.current) {
+      iRef.current = new iScene({
+        mount,
+        alpha: true,
+        antialias: true,
+      });
+    }
+
     const loader = new GLTFLoader();
     loader.load("/gltf/torch/scene.gltf", (gltf) => {
       const model = gltf.scene;
       model.position.set(0, -7.2, -3);
-      scene.add(model);
+      iRef.current!.scene.add(model);
 
-      // 4. Lights
       const mainLight = new THREE.DirectionalLight(0xffffff, 1);
       mainLight.position.set(0, 10, 10);
-      scene.add(mainLight);
+      iRef.current!.scene.add(mainLight);
 
       const backLight = new THREE.DirectionalLight(0xfb8f4c, 0.8);
       backLight.position.set(3, -10, 10);
-      scene.add(backLight);
+      iRef.current!.scene.add(backLight);
 
-      // 5. Optional: Animations
       if (gltf.animations.length > 0) {
         const mixer = new THREE.AnimationMixer(model);
         gltf.animations.forEach((clip) => {
           const action = mixer!.clipAction(clip);
           action.play();
         });
-        addMixer(mixer);
+        iRef.current!.addMixer(mixer);
       }
     });
-  }
+
+    const animate = () => {
+      if (!iRef.current) return;
+      iRef.current.render(); // iScene handles model loading, mixers, etc.
+      requestRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+
+    const handleResize = () => {
+      if (!iRef.current) return;
+      iRef.current.resize();
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Do an initial resize
+
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <div onClick={handleClick} style={{ width: "100%", height: "40vh" }}>
-      <IScene alpha={true} loadScene={loadScene} />
-    </div>
+    <Box
+      ref={mountRef}
+      onClick={igniteTorch}
+      sx={{
+        width: width || "100%",
+        height: height || "100%",
+      }}
+    />
   );
 }

@@ -1,9 +1,8 @@
 "use strict";
 
 import * as THREE from "three";
-// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-interface iSceneProps {
+interface IrisProps {
   mount: HTMLElement;
   alpha?: boolean;
   width?: number;
@@ -11,7 +10,7 @@ interface iSceneProps {
   antialias?: boolean;
 }
 
-export default class iScene {
+export default class Iris {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
@@ -20,8 +19,7 @@ export default class iScene {
   model?: THREE.Group;
   mount: HTMLElement;
 
-  constructor(props: iSceneProps) {
-    // 1. Basic Scene Setup
+  constructor(props: IrisProps) {
     this.mount = props.mount;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
@@ -31,8 +29,7 @@ export default class iScene {
       0.1,
       1000
     );
-    this.camera.position.z = 5;
-
+    this.camera.position.z = 3;
     this.renderer = new THREE.WebGLRenderer({
       alpha: props.alpha,
       antialias: props.antialias,
@@ -43,23 +40,15 @@ export default class iScene {
     );
     props.mount.appendChild(this.renderer.domElement);
 
-    console.log("iScene Initialized");
-
-    // 2. Create Clock for Animation
     this.clock = new THREE.Clock();
+    console.log("iScene Initialized");
   }
 
-  loadScene(
-    scenFunc: (
-      scene: THREE.Scene,
-      addMixer: (m: THREE.AnimationMixer) => void
-    ) => void
-  ) {
-    scenFunc(this.scene, this.addMixers.bind(this));
+  loadScene(scenFunc: (i: Iris) => void) {
+    scenFunc(this);
   }
 
   /**
-   * Called every animation frame from the `<IScene />` component.
    * Update any mixers, then render the scene.
    */
   render() {
@@ -68,13 +57,14 @@ export default class iScene {
     this.renderer.render(this.scene, this.camera);
   }
 
-  addMixers(mixer: THREE.AnimationMixer) {
+  addMixer(mixer: THREE.AnimationMixer) {
     this.mixers.push(mixer);
   }
 
   /**
    * Resize the renderer to the new width and height.
-   * If no width or height is provided, it will default to the mount's clientWidth and clientHeight.
+   * If no width or height is provided,
+   * it will default to the mount's clientWidth and clientHeight.
    */
   resize(width?: number, height?: number) {
     const nWidth = width ? width : this.mount.clientWidth;

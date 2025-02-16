@@ -30,7 +30,7 @@ export default function HomePage() {
             <Typography variant="body1" gutterBottom>
               Adventure Begins
             </Typography>
-            <Torch />
+            <Torch sceneHeight={"40vh"} />
           </Box>
         </>
       ) : (
