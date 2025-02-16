@@ -1,14 +1,18 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import Typography from "@mui/material/Typography";
-import { Box } from "@mui/material";
+"use client";
+
+import { useSession } from "next-auth/react";
+import { Box, Typography } from "@mui/material";
+import Dashboard from "./components/Dashboard";
 import SignInButton from "./components/SignInButton";
 import GitHubButton from "./components/GitHubButton";
 import Torch from "./three/Torch";
-import Dashboard from "./components/Dashboard";
 
-export default async function HomePage() {
-  const session = await getServerSession(authOptions);
+export default function HomePage() {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Box>

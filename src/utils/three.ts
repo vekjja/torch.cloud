@@ -39,3 +39,25 @@ export function initThreeScene({
     mount.appendChild(renderer.domElement);
   }
 }
+
+export function newThreeScene({
+  width,
+  height,
+  mount,
+  alpha = false,
+  antialias = true,
+}: ThreeSceneProps) {
+  const s = new THREE.Scene();
+  const c = new THREE.PerspectiveCamera(
+    75,
+    (width || mount.clientWidth) / (height || mount.clientHeight),
+    0.1,
+    1000
+  );
+  const r = new THREE.WebGLRenderer({ alpha, antialias });
+  r.setSize(width || mount.clientWidth, height || mount.clientHeight);
+  mount.appendChild(r.domElement);
+  return { scene: s, camera: c, renderer: r };
+}
+
+export function new3BaseScene() {}
