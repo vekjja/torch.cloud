@@ -130,9 +130,7 @@ startupProbe:
   httpGet:
     path: /
     port: http
-  initialDelaySeconds: 27
-  periodSeconds: 10
-  failureThreshold: 30
+  initialDelaySeconds: 9
 
 autoscaling:
   enabled: false

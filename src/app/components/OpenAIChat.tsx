@@ -88,6 +88,8 @@ export default function OpenAIChat() {
 
   const handleSubmit = async () => {
     playMenuSFX();
+    // scroll to top
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (!input.trim()) return;
     if (actionPoints === null || actionPoints <= 0) {
       setResponse(`⚠️ Not enough Action Points to perform this action.
