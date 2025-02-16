@@ -5,7 +5,7 @@ import { Box, Typography } from "@mui/material";
 import Dashboard from "./components/Dashboard";
 import SignInButton from "./components/SignInButton";
 import GitHubButton from "./components/GitHubButton";
-import Torch from "./three/Torch";
+import Torch from "./components/Torch";
 
 export default function HomePage() {
   const { data: session, status } = useSession();

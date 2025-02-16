@@ -3,7 +3,7 @@ import { Box, TextField, Button } from "@mui/material";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import { useSession } from "next-auth/react";
 import ReactMarkdown from "react-markdown";
-import Torch from "../three/Torch";
+import Torch from "./Torch";
 import {
   playMenuSFX,
   playRandomBGM,
@@ -167,7 +167,7 @@ export default function OpenAIChat() {
 
   return (
     <Box sx={{ textAlign: "center", padding: 1 }}>
-      <Torch />
+      <Torch sceneHeight={"40vh"} />
       {response && (
         <Box
           sx={{
