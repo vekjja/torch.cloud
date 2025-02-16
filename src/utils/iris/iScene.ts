@@ -1,7 +1,7 @@
 "use strict";
 
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 interface iSceneProps {
   mount: HTMLElement;
@@ -16,7 +16,7 @@ export default class iScene {
   camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
   clock: THREE.Clock;
-  mixer: THREE.AnimationMixer | null = null;
+  mixers: THREE.AnimationMixer[] = [];
   model?: THREE.Group;
   mount: HTMLElement;
 
@@ -47,47 +47,15 @@ export default class iScene {
 
     // 2. Create Clock for Animation
     this.clock = new THREE.Clock();
-
-    // 3. Load Torch Model
-    this.loadGLTF("/gltf/torch/scene.gltf");
   }
 
-  private loadGLTF(modelPath: string) {
-    if (!modelPath) {
-      console.error("No model path provided");
-      return;
-    }
-    const loader = new GLTFLoader();
-    loader.load(
-      modelPath,
-      (gltf) => {
-        this.model = gltf.scene;
-        this.model.position.set(0, -7.2, -3);
-        this.scene.add(this.model);
-
-        // 4. Lights
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1);
-        mainLight.position.set(0, 10, 10);
-        this.scene.add(mainLight);
-
-        const backLight = new THREE.DirectionalLight(0xfb8f4c, 0.8);
-        backLight.position.set(3, -10, 10);
-        this.scene.add(backLight);
-
-        // 5. Optional: Animations
-        if (gltf.animations.length > 0) {
-          this.mixer = new THREE.AnimationMixer(this.model);
-          gltf.animations.forEach((clip) => {
-            const action = this.mixer!.clipAction(clip);
-            action.play();
-          });
-        }
-      },
-      undefined,
-      (err) => {
-        console.error("Error loading torch model:", err);
-      }
-    );
+  loadScene(
+    scenFunc: (
+      scene: THREE.Scene,
+      addMixer: (m: THREE.AnimationMixer) => void
+    ) => void
+  ) {
+    scenFunc(this.scene, this.addMixers.bind(this));
   }
 
   /**
@@ -96,11 +64,12 @@ export default class iScene {
    */
   render() {
     const delta = this.clock.getDelta();
-    // If there's an active mixer, update it
-    if (this.mixer) {
-      this.mixer.update(delta);
-    }
+    this.mixers.forEach((mixer) => mixer.update(delta));
     this.renderer.render(this.scene, this.camera);
+  }
+
+  addMixers(mixer: THREE.AnimationMixer) {
+    this.mixers.push(mixer);
   }
 
   /**

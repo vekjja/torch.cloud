@@ -4,11 +4,17 @@ import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 import iScene from "@/utils/iris/iScene";
 
+import * as THREE from "three";
+
 interface iSceneRefProps {
   alpha?: boolean;
   width?: number;
   height?: number;
   antialias?: boolean;
+  loadScene?: (
+    scene: THREE.Scene,
+    addMixer: (m: THREE.AnimationMixer) => void
+  ) => void;
 }
 
 const IScene = ({
@@ -16,6 +22,7 @@ const IScene = ({
   height,
   alpha = false,
   antialias = true,
+  loadScene = () => {},
 }: iSceneRefProps) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -35,6 +42,8 @@ const IScene = ({
         antialias,
       });
     }
+
+    iSceneRef.current.loadScene(loadScene);
 
     // 2. Start the animation loop
     const animate = () => {
