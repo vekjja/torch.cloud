@@ -1,8 +1,8 @@
 "use strict";
 
 import * as THREE from "three";
-import iCam from "./iris/iCam";
-import iObject from "./iris/iObject";
+import iCam from "./iCam";
+import iObject from "./iObject";
 
 interface IrisProps {
   mount: HTMLElement;

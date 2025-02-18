@@ -169,7 +169,7 @@ export default function OpenAIChat() {
 
   return (
     <Box sx={{ textAlign: "center", padding: 1 }}>
-      <Torch sceneHeight={"40vh"} />
+      <Torch sceneHeight={"40vh"} enableControls={true} />
       {response && (
         <Box
           sx={{

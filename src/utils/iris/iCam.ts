@@ -1,6 +1,6 @@
 "use strict";
 
-import Iris from "../Iris";
+import Iris from "./Iris";
 import * as THREE from "three";
 import iObject from "./iObject";
 

@@ -1,7 +1,7 @@
 "use-strict";
 
 import * as THREE from "three";
-import Iris from "../Iris";
+import Iris from "./Iris";
 
 export default class iObject {
   x: number;

@@ -4,18 +4,20 @@ import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 
 import * as THREE from "three";
-import iScene from "@/utils/Iris";
+import iScene from "@/utils/iris/Iris";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { igniteTorch } from "@/utils/audio";
 
 interface TorchProps {
   sceneWidth?: string | number;
   sceneHeight?: string | number;
+  enableControls?: boolean;
 }
 
 export default function Torch({
   sceneWidth: width,
   sceneHeight: height,
+  enableControls = false,
 }: TorchProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number | null>(null);
@@ -56,7 +58,8 @@ export default function Torch({
         iRef.current!.addMixer(mixer);
       }
     });
-    iRef.current.cam.enableControls();
+
+    if (enableControls) iRef.current.cam.enableControls();
 
     const animate = () => {
       if (!iRef.current) return;
