@@ -4,6 +4,8 @@ import * as THREE from "three";
 import iCam from "./iCam";
 import iObject from "./iObject";
 
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 interface IrisProps {
   mount: HTMLElement;
   alpha?: boolean;
@@ -15,11 +17,14 @@ interface IrisProps {
 export default class Iris {
   cam: iCam;
   scene: THREE.Scene;
+  mount: HTMLElement;
+  clock: THREE.Clock;
   renderer: THREE.WebGLRenderer;
   mixers: THREE.AnimationMixer[] = [];
-  sceneObjects: iObject[] = [];
-  clock: THREE.Clock;
-  mount: HTMLElement;
+  iObjs: iObject[] = [];
+  audioLoader: THREE.AudioLoader = new THREE.AudioLoader();
+  gltfLoader: GLTFLoader = new GLTFLoader();
+  animate: () => void;
 
   constructor(props: IrisProps) {
     this.mount = props.mount;
@@ -37,6 +42,14 @@ export default class Iris {
 
     this.clock = new THREE.Clock();
     console.log("iScene Initialized");
+
+    this.animate = () => {
+      this.render();
+      requestAnimationFrame(this.animate);
+    };
+    this.animate();
+
+    window.addEventListener("resize", () => this.resize());
   }
 
   loadScene(sceneFunc: (i: Iris) => void) {
@@ -68,5 +81,30 @@ export default class Iris {
     this.cam.lens.aspect = nWidth / nHeight;
     this.cam.lens.updateProjectionMatrix();
     this.renderer.setSize(nWidth, nHeight);
+  }
+
+  enableControls() {
+    this.cam.enableControls();
+  }
+
+  getPositionalAudio(fileName = "", dist = 1) {
+    const listener = new THREE.AudioListener();
+    this.cam.lens.add(listener);
+    const audio = new THREE.PositionalAudio(listener);
+    this.audioLoader.load(fileName, function (buffer) {
+      audio.setBuffer(buffer);
+      audio.setRefDistance(dist);
+      audio.play();
+    });
+    return audio;
+  }
+
+  dispose() {
+    this.renderer.dispose();
+    this.mount.removeChild(this.renderer.domElement);
+    window.removeEventListener("resize", () => this.resize());
+    for (const obj of this.iObjs) {
+      obj.dispose();
+    }
   }
 }

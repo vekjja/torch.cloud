@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Box } from "@mui/material";
 
 import * as THREE from "three";
-import iScene from "@/utils/iris/Iris";
+import { Iris } from "@/utils/iris";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { igniteTorch } from "@/utils/audio";
 
@@ -20,15 +20,14 @@ export default function Torch({
   enableControls = false,
 }: TorchProps) {
   const mountRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number | null>(null);
-  const iRef = useRef<iScene | null>(null);
+  const iRef = useRef<Iris | null>(null);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
     if (!iRef.current) {
-      iRef.current = new iScene({
+      iRef.current = new Iris({
         mount,
         alpha: true,
         antialias: true,
@@ -59,27 +58,12 @@ export default function Torch({
       }
     });
 
-    if (enableControls) iRef.current.cam.enableControls();
-
-    const animate = () => {
-      if (!iRef.current) return;
-      iRef.current.render(); // iScene handles model loading, mixers, etc.
-      requestRef.current = requestAnimationFrame(animate);
-    };
-    animate();
-
-    const handleResize = () => {
-      if (!iRef.current) return;
-      iRef.current.resize();
-    };
-    window.addEventListener("resize", handleResize);
-    handleResize(); // Do an initial resize
+    if (enableControls) iRef.current.enableControls();
 
     return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      window.removeEventListener("resize", handleResize);
+      if (process.env.NODE_ENV === "production") iRef.current?.dispose();
     };
-  }, []);
+  }, [enableControls]);
 
   return (
     <Box

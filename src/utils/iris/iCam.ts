@@ -49,8 +49,7 @@ export default class iCam extends iObject {
     // Create camera
     this.lens = new THREE.PerspectiveCamera(
       45,
-      this.iris.renderer.domElement.width /
-        this.iris.renderer.domElement.height,
+      this.i.renderer.domElement.width / this.i.renderer.domElement.height,
       this.near,
       this.far
     );
@@ -69,41 +68,41 @@ export default class iCam extends iObject {
     this.lens.position.set(x, y, z);
   }
 
-  update(deltaTime: number) {
+  update(delta: number) {
     if (!this.controls || !this.hasPointerLock) return;
 
     // Add some friction to smooth the movement
     const friction = 8.0;
-    this.velocity.x -= this.velocity.x * friction * deltaTime;
-    this.velocity.y -= this.velocity.y * friction * deltaTime;
-    this.velocity.z -= this.velocity.z * friction * deltaTime;
+    this.velocity.x -= this.velocity.x * friction * delta;
+    this.velocity.y -= this.velocity.y * friction * delta;
+    this.velocity.z -= this.velocity.z * friction * delta;
 
     // Apply acceleration if movement flags are active
     const accel = this.speed;
 
     if (this.moveForward) {
-      this.velocity.z -= accel * deltaTime;
+      this.velocity.z -= accel * delta;
     }
     if (this.moveBackward) {
-      this.velocity.z += accel * deltaTime;
+      this.velocity.z += accel * delta;
     }
     if (this.moveLeft) {
-      this.velocity.x -= accel * deltaTime;
+      this.velocity.x -= accel * delta;
     }
     if (this.moveRight) {
-      this.velocity.x += accel * deltaTime;
+      this.velocity.x += accel * delta;
     }
     if (this.moveUp) {
-      this.velocity.y += accel * deltaTime;
+      this.velocity.y += accel * delta;
     }
     if (this.moveDown) {
-      this.velocity.y -= accel * deltaTime;
+      this.velocity.y -= accel * delta;
     }
 
     // Translate the controls in local coordinate space
-    this.controls.translateX(this.velocity.x * deltaTime);
-    this.controls.translateY(this.velocity.y * deltaTime);
-    this.controls.translateZ(this.velocity.z * deltaTime);
+    this.controls.translateX(this.velocity.x * delta);
+    this.controls.translateY(this.velocity.y * delta);
+    this.controls.translateZ(this.velocity.z * delta);
   }
 
   addEventListeners() {
@@ -184,9 +183,9 @@ export default class iCam extends iObject {
 
   enableControls() {
     this.controls = this.pointerLockControls();
-    this.pointerLockElement = this.iris.renderer.domElement;
+    this.pointerLockElement = this.i.renderer.domElement;
     this.addEventListeners();
-    this.iris.renderer.domElement.addEventListener("click", () => {
+    this.i.renderer.domElement.addEventListener("click", () => {
       if (
         this.pointerLockElement &&
         document.pointerLockElement !== this.pointerLockElement
@@ -254,7 +253,7 @@ export default class iCam extends iObject {
     document.addEventListener("mousemove", onMouseMove, false);
 
     // Add our yawObject to the scene; updates each frame
-    this.iris.scene.add(yawObject);
+    this.i.scene.add(yawObject);
 
     return yawObject;
   }

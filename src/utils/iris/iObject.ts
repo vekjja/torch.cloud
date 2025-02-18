@@ -7,31 +7,33 @@ export default class iObject {
   x: number;
   y: number;
   z: number;
-  mixer: THREE.AnimationMixer | null;
-  iris: Iris;
-  obj3D: THREE.Object3D;
+  i: Iris;
+  obj3D: THREE.Object3D | null;
 
-  constructor(
-    i: Iris,
-    x = 0,
-    y = 0,
-    z = 0,
-    threeObject = new THREE.Object3D()
-  ) {
+  constructor(i: Iris, x = 0, y = 0, z = 0, obj3D = null) {
     this.x = x;
     this.y = y;
     this.z = z;
-    this.iris = i;
-    this.mixer = null;
-    this.obj3D = threeObject;
+    this.i = i;
+    this.obj3D = obj3D;
+    this.addToScene();
   }
 
   addToScene() {
-    this.iris.scene.add(this.obj3D);
-    this.iris.sceneObjects.push(this);
+    this.i.iObjs.push(this);
+    if (this.obj3D) this.i.scene.add(this.obj3D);
   }
 
-  update(tick = 0.5) {
+  config() {
+    if (this.obj3D === null) return;
+    this.obj3D.position.set(this.x, this.y, this.z);
+    this.obj3D.receiveShadow = true;
+    this.obj3D.castShadow = true;
+  }
+
+  onUpdate() {}
+
+  update(delta: number) {
     // if (this.scene.physicsEnabled && this.body !== null) {
     //   this.body.getMotionState().getWorldTransform(this.transform);
     //   var origin = this.transform.getOrigin();
@@ -44,15 +46,25 @@ export default class iObject {
     //   this.obj3D.quaternion.z = rotation.z();
     //   this.obj3D.quaternion.w = rotation.w();
     // }
-
-    if (this.mixer !== null) this.mixer.update(tick);
-
-    this.onUpdate();
+    if (delta > 0) this.onUpdate();
   }
 
-  onUpdate() {}
-
   setPosition(x: number, y: number, z: number) {
-    this.obj3D.position.set((this.x = x), (this.y = y), (this.z = z));
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    if (this.obj3D !== null)
+      this.obj3D.position.set((this.x = x), (this.y = y), (this.z = z));
+  }
+
+  addPositionalAudio(fileName = "", dist = 1) {
+    if (!this.obj3D) return;
+    const audio = this.i.getPositionalAudio(fileName, dist);
+    this.obj3D.add(audio);
+  }
+
+  dispose() {
+    if (this.obj3D) this.i.scene.remove(this.obj3D);
+    // this.i.world.removeBody(this.body)
   }
 }
