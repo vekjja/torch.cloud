@@ -1,6 +1,8 @@
 "use strict";
 
 import * as THREE from "three";
+import iCam from "./iris/iCam";
+import iObject from "./iris/iObject";
 
 interface IrisProps {
   mount: HTMLElement;
@@ -11,24 +13,17 @@ interface IrisProps {
 }
 
 export default class Iris {
+  cam: iCam;
   scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
   renderer: THREE.WebGLRenderer;
-  clock: THREE.Clock;
   mixers: THREE.AnimationMixer[] = [];
-  model?: THREE.Group;
+  sceneObjects: iObject[] = [];
+  clock: THREE.Clock;
   mount: HTMLElement;
 
   constructor(props: IrisProps) {
     this.mount = props.mount;
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(
-      75,
-      (props.width || props.mount.clientWidth) /
-        (props.height || props.mount.clientHeight),
-      0.1,
-      1000
-    );
     this.renderer = new THREE.WebGLRenderer({
       alpha: props.alpha,
       antialias: props.antialias,
@@ -38,6 +33,7 @@ export default class Iris {
       props.height || props.mount.clientHeight
     );
     props.mount.appendChild(this.renderer.domElement);
+    this.cam = new iCam(this);
 
     this.clock = new THREE.Clock();
     console.log("iScene Initialized");
@@ -53,7 +49,8 @@ export default class Iris {
   render() {
     const delta = this.clock.getDelta();
     this.mixers.forEach((mixer) => mixer.update(delta));
-    this.renderer.render(this.scene, this.camera);
+    this.cam.update(delta);
+    this.renderer.render(this.scene, this.cam.lens);
   }
 
   addMixer(mixer: THREE.AnimationMixer) {
@@ -68,8 +65,8 @@ export default class Iris {
   resize(width?: number, height?: number) {
     const nWidth = width ? width : this.mount.clientWidth;
     const nHeight = height ? height : this.mount.clientHeight;
-    this.camera.aspect = nWidth / nHeight;
-    this.camera.updateProjectionMatrix();
+    this.cam.lens.aspect = nWidth / nHeight;
+    this.cam.lens.updateProjectionMatrix();
     this.renderer.setSize(nWidth, nHeight);
   }
 }

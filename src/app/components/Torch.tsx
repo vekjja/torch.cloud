@@ -36,10 +36,8 @@ export default function Torch({
     const loader = new GLTFLoader();
     loader.load("/gltf/torch/scene.gltf", (gltf) => {
       const model = gltf.scene;
-      model.position.set(0, -7.2, -3);
+      model.position.set(0, -7.2, -12);
       iRef.current!.scene.add(model);
-
-      iRef.current!.camera.position.set(0, 0, 3);
 
       const mainLight = new THREE.DirectionalLight(0xffffff, 1);
       mainLight.position.set(0, 10, 10);
@@ -58,6 +56,7 @@ export default function Torch({
         iRef.current!.addMixer(mixer);
       }
     });
+    iRef.current.cam.enableControls();
 
     const animate = () => {
       if (!iRef.current) return;
