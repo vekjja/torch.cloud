@@ -7,7 +7,7 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/seemywingz/torch.cloud
+  repository: ghcr.io/vekjja/torch.cloud
   pullPolicy: Always
   tag: "development"
 
