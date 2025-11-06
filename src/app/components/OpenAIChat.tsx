@@ -88,8 +88,6 @@ export default function OpenAIChat() {
 
   const handleSubmit = async () => {
     playMenuSFX();
-    // scroll to top
-    window.scrollTo({ top: 0, behavior: "smooth" });
     if (!input.trim()) return;
     if (actionPoints === null || actionPoints <= 0) {
       setResponse(`⚠️ Not enough Action Points to perform this action.
@@ -97,6 +95,8 @@ export default function OpenAIChat() {
         \n💲 The Option to Purchase More Action Points is Currently Unavailable.
         \n🖤 Please Consider Donating and Come Back Soon!.
         `);
+      // Scroll to top to show the message
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
@@ -118,6 +118,8 @@ export default function OpenAIChat() {
       const data = await res.json();
       if (res.status !== 200) {
         setResponse(data.error || "Error processing request");
+        // Scroll to top to show the error
+        window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
 
@@ -127,10 +129,15 @@ export default function OpenAIChat() {
       await playTTS(data.reply);
       setResponse(data.reply);
 
+      // Scroll to top to show the response
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
       fetchActionPoints();
     } catch (error) {
       console.error("Error:", error);
       setResponse("Error processing request");
+      // Scroll to top to show the error
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     setLoading(false);
@@ -169,7 +176,7 @@ export default function OpenAIChat() {
 
   return (
     <Box sx={{ textAlign: "center", padding: 1 }}>
-      <Torch sceneHeight={"40vh"} enableControls={true} />
+      <Torch sceneHeight={"40vh"} />
       {response && (
         <Box
           sx={{

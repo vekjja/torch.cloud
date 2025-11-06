@@ -6,7 +6,6 @@ import { Button, Box, Modal, Paper } from "@mui/material";
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import { playMenuSFX, playRandomBGM, igniteTorch } from "@/utils/audio";
 
 export default function SignInButton() {
@@ -67,13 +66,6 @@ export default function SignInButton() {
               onClick={() => signIn("discord")}
             >
               <SportsEsportsIcon /> Sign In with Discord
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ mt: 1, mb: 1, height: "40px", fontSize: "0.875rem" }}
-              onClick={() => signIn("linkedin")}
-            >
-              <LinkedInIcon /> Sign In with LinkedIn
             </Button>
           </Box>
         </Paper>

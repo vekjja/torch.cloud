@@ -29,4 +29,4 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 # Start the server after pushing the database schema
-CMD ["sh", "-c", "npm run db-push && npm run start"]
+CMD ["sh", "-c", "npm run start"]
