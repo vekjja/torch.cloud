@@ -6,9 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "lint": "next lint",
-    "db-push-dev": "npx prisma generate && npx prisma db push --accept-data-loss",
-    "db-reset-dev": "npx prisma generate && npx prisma migrate reset --force && npx prisma db push",
-    "db-push-prod": "NODE_ENV=production npx prisma generate && NODE_ENV=production npx prisma db push --accept-data-loss"
+    "db-push-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma db push --accept-data-loss'",
+    "db-reset-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma migrate reset --force && npx prisma db push'",
+    "db-push-prod": "dotenv -e .env.production -- npx prisma generate && dotenv -e .env.production -- npx prisma db push --accept-data-loss"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -37,6 +37,7 @@
     "@types/react-dom": "^19",
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/three": "^0.173.0",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
     "postcss": "^8",
