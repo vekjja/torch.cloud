@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env.dev -- next dev --turbopack",
-    "build": "next build",
-    "lint": "next lint",
     "db-push-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma db push --accept-data-loss'",
     "db-reset-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma migrate reset --force && npx prisma db push'",
-    "db-push-prod": "dotenv -e .env.prod -- sh -c 'npx prisma generate && npx prisma db push'"
+    "db-push-prod": "dotenv -e .env.prod -- sh -c 'npx prisma generate && npx prisma db push'",
+    "lint": "next lint",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
