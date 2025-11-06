@@ -1,7 +1,25 @@
 # Default values for torch.cloud.
 # This is a YAML-formatted file.
+
+# Install PostgreSQL using Helm with flags
+# helm upgrade --install psql bitnami/postgresql \
+#   --namespace "torch-cloud" \
+#   --create-namespace \
+#   --set primary.persistence.storageClass=local-path \
+#   --set primary.persistence.enabled=true \
+#   --set primary.persistence.size=10Gi \
+#   --set volumePermissions.enabled=true
+
+# Create a secret for the Docker registry
+# kubectl create secret docker-registry ghcr-secret \
+#   --docker-server=ghcr.io \
+#   --docker-username=vekjja \
+#   --docker-password=${GITHUB_CR_PAT}
+
 # Declare variables to be passed into your templates.
-#  helm upgrade --install torch-cloud . -f values.yaml
+#  helm upgrade --install torch-cloud helm/app -f helm/app/values.yaml \
+#    --namespace torch-cloud \
+#    --create-namespace
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
@@ -17,7 +35,8 @@ imagePullSecrets:
 nameOverride: ""
 fullnameOverride: ""
 
-# This section builds out the srvice account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+# This section builds out the srvice account 
+# more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   create: true
   automount: true
@@ -39,55 +58,14 @@ service:
   type: ClusterIP
   port: 3000
 
-env:
-- name: NODE_ENV
-  value: production
-- name: DATABASE_URL
-  valueFrom:
-    secretKeyRef:
-      name: psql-db-url
-      key: url
-- name: NEXTAUTH_URL
-  value: https://torch.cloud
-- name: NEXTAUTH_CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: nextauth-client-secret
-      key: client-secret
-- name: GOOGLE_CLIENT_ID
-  valueFrom:
-    secretKeyRef:
-      name: google-client-id
-      key: client-id
-- name: GOOGLE_CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: google-client-secret
-      key: client-secret
-- name: DISCORD_CLIENT_ID
-  valueFrom:
-    secretKeyRef:
-      name: discord-client-id
-      key: client-id
-- name: DISCORD_CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: discord-client-secret
-      key: client-secret
-- name: OPENAI_API_KEY
-  valueFrom:
-    secretKeyRef:
-      name: openai-api-key
-      key: api-key
-- name: OPENAI_MODEL
-  value: "gpt-4o"
-- name: OPENAI_MAX_COMPLETION_TOKENS
-  value: "198"
+# Name of the secret containing all environment variables
+# Create this secret with: kubectl create secret generic torch-cloud-env --from-env-file=.env
+envSecretName: torch-cloud-env
 
 ingress:
   enabled: true
   className: "nginx"
-  annotations: { cert-manager.io/cluster-issuer: "cloudlfare-letsencrypt-production" }
+  annotations: { cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-production" }
   hosts:
   - host: torch.cloud
     paths:

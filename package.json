@@ -8,7 +8,7 @@
     "lint": "next lint",
     "db-push-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma db push --accept-data-loss'",
     "db-reset-dev": "dotenv -e .env.dev -- sh -c 'npx prisma generate && npx prisma migrate reset --force && npx prisma db push'",
-    "db-push-prod": "dotenv -e .env.production -- npx prisma generate && dotenv -e .env.production -- npx prisma db push --accept-data-loss"
+    "db-push-prod": "dotenv -e .env.prod -- sh -c 'npx prisma generate && npx prisma db push'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
