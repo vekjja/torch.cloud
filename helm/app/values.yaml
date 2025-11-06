@@ -64,16 +64,6 @@ env:
     secretKeyRef:
       name: google-client-secret
       key: client-secret
-- name: LINKEDIN_CLIENT_ID
-  valueFrom:
-    secretKeyRef:
-      name: linkedin-client-id
-      key: client-id
-- name: LINKEDIN_CLIENT_SECRET
-  valueFrom:
-    secretKeyRef:
-      name: linkedin-client-secret
-      key: client-secret
 - name: DISCORD_CLIENT_ID
   valueFrom:
     secretKeyRef:
