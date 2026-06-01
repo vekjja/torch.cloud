@@ -14,6 +14,7 @@ COPY prisma.config.ts ./
 RUN pnpm install --frozen-lockfile
 
 COPY . .
+ENV OPENAI_API_KEY=""
 RUN pnpm build
 
 
