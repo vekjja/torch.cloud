@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+const getOpenAI = () => {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error("OPENAI_API_KEY is required");
+  }
+  return new OpenAI({ apiKey });
+};
 
 export async function POST(req: Request) {
   try {
@@ -23,6 +27,7 @@ export async function POST(req: Request) {
     const requestVoice = voice || "sage";
 
     console.log("Generating speech with voice:", requestVoice);
+    const openai = getOpenAI();
 
     const response = await openai.audio.speech.create({
       model: "tts-1",
