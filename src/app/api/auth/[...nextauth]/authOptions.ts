@@ -2,18 +2,17 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import DiscordProvider from "next-auth/providers/discord";
 // import EmailProvider from "next-auth/providers/email";
-import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "@/lib/prisma";
+import LinkedInProvider, {
+  LinkedInProfile,
+} from "next-auth/providers/linkedin";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
-
-export const prisma = globalForPrisma.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+export { prisma };
 
 //  Redirect URL for OAuth providers
 //  https://localhost:3000/api/auth/callback/[provider]
-//  http://torch.cloud/api/auth/callback/[provider]
+//  http://livingroom.cloud/api/auth/callback/[provider]
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -37,6 +36,25 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.DISCORD_CLIENT_ID || "",
       clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
     }),
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID || "",
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET || "",
+      client: { token_endpoint_auth_method: "client_secret_post" },
+      issuer: "https://www.linkedin.com",
+      profile: (profile: LinkedInProfile) => ({
+        id: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        image: profile.picture,
+      }),
+      wellKnown:
+        "https://www.linkedin.com/oauth/.well-known/openid-configuration",
+      authorization: {
+        params: {
+          scope: "openid profile email",
+        },
+      },
+    }),
   ],
-  secret: process.env.NEXTAUTH_SECRET || process.env.NEXTAUTH_CLIENT_SECRET,
+  secret: process.env.NEXTAUTH_CLIENT_SECRET,
 };

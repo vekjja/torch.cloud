@@ -1,14 +1,16 @@
 # Default values for torch.cloud.
 # This is a YAML-formatted file.
 
-# Create a secret for the Docker registry
+# Create image pull secret in namespace 
 # kubectl create secret docker-registry ghcr-secret \
 #   --docker-server=ghcr.io \
 #   --docker-username=vekjja \
-#   --docker-password=${GITHUB_PAT}
+#   --docker-password=$GITHUB_PAT \
+#   -n torch-cloud
 
 # Declare variables to be passed into your templates.
-#  helm upgrade --install torch-cloud helm/app -f helm/app/values.yaml \
+# helm upgrade --install torch-cloud helm/app \
+#    -f helm/app/values.yaml \
 #    --namespace torch-cloud \
 #    --create-namespace
 
@@ -46,7 +48,7 @@ postgresql:
         memory: 1Gi
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
-replicaCount: 1
+replicaCount: 0
 
 image:
   repository: ghcr.io/vekjja/torch.cloud
