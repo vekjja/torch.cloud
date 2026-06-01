@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
         Privacy Policy
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
-        **Last Updated:** 01/14/2025
+        **Last Updated:** 06/1/2026
       </Typography>
       <Typography variant="body1" sx={{ mb: 2 }}>
         This Privacy Policy explains how we collect, use, and protect your

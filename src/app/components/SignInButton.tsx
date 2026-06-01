@@ -1,12 +1,12 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-// import Torch from "../three/Torch";
 import { Button, Box, Modal, Paper } from "@mui/material";
 import { useState } from "react";
 import GoogleIcon from "@mui/icons-material/Google";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+// import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import { playMenuSFX, playRandomBGM, igniteTorch } from "@/utils/audio";
+import Torch from "./Torch";
 
 export default function SignInButton() {
   const [open, setOpen] = useState(false);
@@ -25,9 +25,12 @@ export default function SignInButton() {
 
   return (
     <Box>
-      <Button variant="contained" color="primary" onClick={handleClickOpen}>
+      {/* <Button variant="contained" color="primary" onClick={handleClickOpen}>
         Sign In
-      </Button>
+      </Button> */}
+      <Box onClick={handleClickOpen} sx={{ cursor: "pointer", mt: 4 }}>
+       <Torch sceneHeight={"40vh"} />
+      </Box>
       <Modal
         open={open}
         onClose={handleClose}
@@ -60,13 +63,13 @@ export default function SignInButton() {
             >
               <GoogleIcon /> Sign In with Google
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{ mt: 1, mb: 1, height: "40px", fontSize: "0.875rem" }}
               onClick={() => signIn("discord")}
             >
               <SportsEsportsIcon /> Sign In with Discord
-            </Button>
+            </Button> */}
           </Box>
         </Paper>
       </Modal>
