@@ -47,13 +47,20 @@ postgresql:
         cpu: 500m
         memory: 1Gi
 
+# Prisma migrations: same image as the app, runs after install/upgrade (Helm hook) before hook completion.
+migrationJob:
+  enabled: true
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  resources: {}
+
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
-replicaCount: 0
+replicaCount: 1
 
 image:
   repository: ghcr.io/vekjja/torch.cloud
   pullPolicy: Always
-  tag: "development"
+  tag: "dev"
 
 imagePullSecrets:
 - name: ghcr-secret

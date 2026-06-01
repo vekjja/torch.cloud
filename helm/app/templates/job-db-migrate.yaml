@@ -1,0 +1,53 @@
+{{- if .Values.migrationJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "torch.cloud.fullname" . }}-db-migrate
+  labels:
+    {{- include "torch.cloud.labels" . | nindent 4 }}
+    app.kubernetes.io/component: db-migrate
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "0"
+spec:
+  backoffLimit: {{ .Values.migrationJob.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.migrationJob.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "torch.cloud.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: db-migrate
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "torch.cloud.serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: db-migrate
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["pnpm", "db:migrate:deploy"]
+          {{- with .Values.env }}
+          env:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if not (empty .Values.migrationJob.resources) }}
+          resources:
+            {{- toYaml .Values.migrationJob.resources | nindent 12 }}
+          {{- end }}
+{{- end }}
