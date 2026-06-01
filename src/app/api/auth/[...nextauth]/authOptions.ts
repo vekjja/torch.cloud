@@ -38,5 +38,5 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
     }),
   ],
-  secret: process.env.NEXTAUTH_CLIENT_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || process.env.NEXTAUTH_CLIENT_SECRET,
 };

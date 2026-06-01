@@ -1,32 +1,38 @@
-# 1. Build stage
-FROM node:23-alpine AS builder
+FROM node:26-alpine AS builder
 
-ENV OPENAI_API_KEY=""
+RUN apk add --no-cache openssl libc6-compat
+RUN npm install -g pnpm
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
 
-# Copy all files not in .dockerignore
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
+
+RUN pnpm install --frozen-lockfile
+
 COPY . .
+RUN pnpm build
 
-# Generate Prisma client
-RUN npx prisma generate
 
-# Build the Next.js app (production build)
-RUN npm run build
+FROM node:26-alpine AS runner
 
-# 2. Production stage
-FROM node:23-alpine
+RUN apk add --no-cache openssl libc6-compat
+RUN npm install -g pnpm
+
 WORKDIR /app
 
-# Copy the build output and node_modules from the builder stage
+ENV NODE_ENV=production
+
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/package.json ./
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 
 EXPOSE 3000
 
-# Start the server after pushing the database schema
-CMD ["sh", "-c", "npm run start"]
+CMD ["pnpm", "start"]

@@ -23,7 +23,7 @@ export default function HomePage() {
             <SignInButton />
             <GitHubButton />
           </Box>
-          <Box margin={"18%"} textAlign="center">
+          <Box sx={{ margin: "18%", textAlign: "center" }}>
             <Typography variant="h2" gutterBottom>
               Torch Cloud
             </Typography>

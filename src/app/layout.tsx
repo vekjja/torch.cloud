@@ -25,7 +25,7 @@ export default function RootLayout({
         <ClientProviders>
           {children}
           {/* Footer / Privacy link */}
-          <Box width="100%" textAlign="center" padding="1rem" marginTop="100vh">
+          <Box sx={{ width: "100%", textAlign: "center", padding: "1rem", marginTop: "100vh" }}>
             <Link href="/privacy" color="inherit" underline="none">
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 Privacy Policy

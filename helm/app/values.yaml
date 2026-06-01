@@ -1,25 +1,49 @@
 # Default values for torch.cloud.
 # This is a YAML-formatted file.
 
-# Install PostgreSQL using Helm with flags
-# helm upgrade --install psql bitnami/postgresql \
-#   --namespace "torch-cloud" \
-#   --create-namespace \
-#   --set primary.persistence.storageClass=local-path \
-#   --set primary.persistence.enabled=true \
-#   --set primary.persistence.size=10Gi \
-#   --set volumePermissions.enabled=true
-
 # Create a secret for the Docker registry
 # kubectl create secret docker-registry ghcr-secret \
 #   --docker-server=ghcr.io \
 #   --docker-username=vekjja \
-#   --docker-password=${GITHUB_CR_PAT}
+#   --docker-password=${GITHUB_PAT}
 
 # Declare variables to be passed into your templates.
 #  helm upgrade --install torch-cloud helm/app -f helm/app/values.yaml \
 #    --namespace torch-cloud \
 #    --create-namespace
+
+# Bitnami PostgreSQL subchart (https://github.com/bitnami/charts/tree/main/bitnami/postgresql).
+postgresql:
+  enabled: true
+  fullnameOverride: torch-cloud-psql
+
+  image:
+    pullPolicy: IfNotPresent
+    debug: true
+
+  auth:
+    existingSecret: torch-cloud-env
+    secretKeys:
+      adminPasswordKey: POSTGRES_PASSWORD
+    database: torch-cloud
+
+  volumePermissions:
+    enabled: true
+
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: local-path
+
+    resourcesPreset: none
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
@@ -58,14 +82,29 @@ service:
   type: ClusterIP
   port: 3000
 
-# Name of the secret containing all environment variables
-# Create this secret with: kubectl create secret generic torch-cloud-env --from-env-file=.env
-envSecretName: torch-cloud-env
+externalSecret:
+  enabled: true
+  name: torch-cloud-env
+  secretStoreName: gcp-secret-manager
+  secretStoreKind: ClusterSecretStore
+  remoteSecretName: torch-cloud-env
+  refreshInterval: 1h
+
+envFrom:
+- secretRef:
+    name: torch-cloud-env
+
+env:
+- name: NODE_ENV
+  value: production
 
 ingress:
   enabled: true
   className: "nginx"
-  annotations: { cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-production" }
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: torch.cloud
+    external-dns.alpha.kubernetes.io/target: "174.44.105.210"
+    cert-manager.io/cluster-issuer: "cloudflare-letsencrypt-production"
   hosts:
   - host: torch.cloud
     paths:
