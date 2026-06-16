@@ -108,7 +108,7 @@ env:
   value: production
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations:
     external-dns.alpha.kubernetes.io/hostname: torch.cloud
@@ -123,6 +123,24 @@ ingress:
   - secretName: torch.cloud-tls
     hosts:
     - torch.cloud
+
+# -- Expose the service via gateway-api HTTPRoute
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+httpRoute:
+  enabled: true
+  annotations: {}
+  parentRefs:
+  - name: http-gateway
+    namespace: kgateway-system
+  hostnames:
+  - "torch.cloud"
+  # List of rules and filters applied.
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
 
 resources: {}
   # limits:
