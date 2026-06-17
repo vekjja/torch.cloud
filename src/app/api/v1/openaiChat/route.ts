@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     const reqMessages = messages.slice(messages.length - 63); // keep only the last 63 messages
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const model = process.env.OPENAI_MODEL || "gpt-5.4-mini";
     const maxCompletionTokens =
       Number(process.env.OPENAI_MAX_COMPLETION_TOKENS) || 207;
 

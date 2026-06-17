@@ -13,7 +13,6 @@ export default function Dashboard({ session }: DashboardProps) {
   return (
     <Box onClick={() => {}}>
       <TopBar session={session} />
-      Hello World
       <Box sx={{ padding: 2 }}>
         <OpenAIChat />
       </Box>
