@@ -3,7 +3,7 @@
 import TopBar from "./TopBar";
 import { Box } from "@mui/material";
 import { Session } from "next-auth";
-// import OpenAIChat from "./OpenAIChat";
+import OpenAIChat from "./OpenAIChat";
 
 interface DashboardProps {
   session: Session;
@@ -13,8 +13,9 @@ export default function Dashboard({ session }: DashboardProps) {
   return (
     <Box onClick={() => {}}>
       <TopBar session={session} />
+      Hello World
       <Box sx={{ padding: 2 }}>
-        {/* <OpenAIChat /> */}
+        <OpenAIChat />
       </Box>
     </Box>
   );
